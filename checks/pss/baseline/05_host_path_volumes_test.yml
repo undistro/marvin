@@ -1,0 +1,101 @@
+- name: "volumes not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "hostPath volumes not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          volumes:
+            - name: config
+              configMap:
+                name: nginx-config
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "hostPath set to null"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          volumes:
+            - name: config
+              hostPath: null
+              configMap:
+                name: nginx-config
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "hostPath volume specified"
+  pass: false
+  message: "Pod with mounted host volume"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          volumes:
+            - name: config
+              hostPath: null
+              configMap:
+                name: nginx-config
+            - name: config
+              hostPath:
+                path: path
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx

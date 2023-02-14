@@ -1,0 +1,55 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_restricted.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_restricted_test.go
+id: seccomp-restricted
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  # Pod or Containers must set `securityContext.seccompProfile.type`
+  - expression: >
+      (
+        has(podSpec.securityContext) && 
+        has(podSpec.securityContext.seccompProfile) &&
+        has(podSpec.securityContext.seccompProfile.type)
+      ) ||
+      allContainers.all(container,
+        has(container.securityContext) && 
+        has(container.securityContext.seccompProfile) &&
+        has(container.securityContext.seccompProfile.type)
+      )
+    message: "Seccomp profile must be explicitly set to one of the allowed values"
+
+  # Neither Pod nor Containers should set `securityContext.seccompProfile.type` to Unconfined
+  - expression: >
+      (
+        !has(podSpec.securityContext) || 
+        !has(podSpec.securityContext.seccompProfile) || 
+        !has(podSpec.securityContext.seccompProfile.type) || 
+        podSpec.securityContext.seccompProfile.type != 'Unconfined'
+      )
+      &&
+      allContainers.all(container,
+        !has(container.securityContext) || 
+        !has(container.securityContext.seccompProfile) || 
+        !has(container.securityContext.seccompProfile.type) || 
+        container.securityContext.seccompProfile.type != 'Unconfined'
+      )
+    message: "Seccomp profile must be explicitly set to one of the allowed values"

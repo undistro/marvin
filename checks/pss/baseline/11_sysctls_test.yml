@@ -1,0 +1,118 @@
+- name: "securityContext not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+- name: "securityContext.sysctls not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsNonRoot: true
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.sysctls set to kernel.shm_rmid_forced"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            sysctls:
+              - name: kernel.shm_rmid_forced
+                value: "0"
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.sysctls set to net.ipv4.ip_unprivileged_port_start"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            sysctls:
+              - name: net.ipv4.ip_unprivileged_port_start
+                value: "1000"
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.sysctls set to kernel.msgmax"
+  pass: false
+  message: "Pod using unsafe sysctls"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            sysctls:
+              - name: kernel.msgmax
+                value: "65536"
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx

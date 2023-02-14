@@ -1,0 +1,143 @@
+- name: "securityContext not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.windowsOptions not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsNonRoot: true
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.windowsOptions.hostProcess not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            windowsOptions:
+              runAsUserName: user
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.windowsOptions.hostProcess set to false"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            windowsOptions:
+              hostProcess: false
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.windowsOptions.hostProcess set to true"
+  pass: false
+  message: "Pod with privileged access to the Windows node"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            windowsOptions:
+              hostProcess: true
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "second container with securityContext.windowsOptions.hostProcess set to true"
+  pass: false
+  message: "Container with privileged access to the Windows node"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: proxy
+              image: proxy
+            - name: nginx
+              image: nginx
+              securityContext:
+                windowsOptions:
+                  hostProcess: true
+      selector:
+        matchLabels:
+          app: nginx

@@ -1,0 +1,29 @@
+id: read-only-root-filesystem
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  - expression: >
+      allContainers.all(container,
+        has(container.securityContext) &&
+        has(container.securityContext.readOnlyRootFilesystem) &&
+        container.securityContext.readOnlyRootFilesystem == true
+      )
+    message: "Container is able to write to the root filesystem"

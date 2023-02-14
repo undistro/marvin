@@ -1,0 +1,94 @@
+- name: "volumes not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "empty volume list"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          volumes: []
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "configMap volume"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          volumes:
+            - name: vol
+              configMap:
+                name: cm
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "nfs volume"
+  pass: false
+  message: "Not allowed volume type used"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          volumes:
+            - name: vol
+              nfs:
+                path: path
+                server: server
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx

@@ -1,0 +1,145 @@
+- name: "securityContext not specified"
+  pass: false
+  message: "Containers must drop ALL capabilities"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.capabilities not specified"
+  pass: false
+  message: "Containers must drop ALL capabilities"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsNonRoot: true
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.capabilities.drop not includes ALL"
+  pass: false
+  message: "Containers must drop ALL capabilities"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                capabilities:
+                  drop: [KILL]
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.capabilities.drop includes ALL"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                capabilities:
+                  drop: [KILL, ALL, CHOWN]
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.capabilities.add includes not allowed capabilities"
+  pass: false
+  message: "Container running with not allowed capabilities"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                capabilities:
+                  drop: [ALL]
+                  add: [CHOWN, NET_BIND_SERVICE, SETGID, SETUID]
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.capabilities.add only NET_BIND_SERVICE"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                capabilities:
+                  drop: [ALL]
+                  add: [NET_BIND_SERVICE]
+      selector:
+        matchLabels:
+          app: nginx

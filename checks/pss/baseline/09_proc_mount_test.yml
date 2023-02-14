@@ -1,0 +1,112 @@
+- name: "securityContext not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+- name: "securityContext.procMount not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsNonRoot: true
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.procMount set to Default"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                procMount: Default
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.procMount set to Default"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                procMount: Default
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.procMount set to Unmasked"
+  pass: false
+  message: "Container using forbidden proc mount type"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                procMount: Unmasked
+      selector:
+        matchLabels:
+          app: nginx

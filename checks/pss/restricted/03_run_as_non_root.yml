@@ -1,0 +1,41 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsNonRoot.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsNonRoot_test.go
+id: run-as-non-root
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  # Pod or Containers must set `securityContext.runAsNonRoot`
+  - expression: >
+      (has(podSpec.securityContext) && has(podSpec.securityContext.runAsNonRoot)) ||
+      allContainers.all(container,
+        has(container.securityContext) && has(container.securityContext.runAsNonRoot)
+      )
+    message: "Container could be running as root user"
+
+  # Neither Pod nor Containers should set `securityContext.runAsNonRoot` to false
+  - expression: >
+      (!has(podSpec.securityContext) || !has(podSpec.securityContext.runAsNonRoot) || podSpec.securityContext.runAsNonRoot != false)
+      &&
+      allContainers.all(container,
+        !has(container.securityContext) || !has(container.securityContext.runAsNonRoot) || container.securityContext.runAsNonRoot != false
+      )
+    message: "Container could be running as root user"

@@ -1,0 +1,37 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile_test.go
+id: apparmor
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  - expression: >
+      !has(podMeta.annotations) ||
+      !podMeta.annotations.exists(key,
+        key.startsWith('container.apparmor.security.beta.kubernetes.io')
+      ) ||
+      podMeta.annotations.filter(key,
+        key.startsWith('container.apparmor.security.beta.kubernetes.io')
+      ).all(key,
+        podMeta.annotations[key] == 'runtime/default' ||
+        podMeta.annotations[key].startsWith('localhost/')
+      )
+    message: "Container running with forbidden AppArmor profile"

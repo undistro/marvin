@@ -1,0 +1,34 @@
+id: registry
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+params:
+  # use 'docker.io' for Docker Hub
+  allowedRegistries: []
+validations:
+  - expression: >
+      size(params.allowedRegistries) == 0 ||
+      allContainers.all(container,
+        params.allowedRegistries.exists(registry,
+          ((registry in ['docker.io', 'docker.io/library']) && !container.image.contains('/')) ||
+          container.image.startsWith(registry)
+        )
+      )
+    message: "Container image registry not allowed"

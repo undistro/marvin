@@ -1,0 +1,92 @@
+- name: "securityContext not specified"
+  pass: false
+  message: "Container is able to write to the root filesystem"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.readOnlyRootFilesystem not specified"
+  pass: false
+  message: "Container is able to write to the root filesystem"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsNonRoot: true
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.readOnlyRootFilesystem set to false"
+  pass: false
+  message: "Container is able to write to the root filesystem"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                readOnlyRootFilesystem: false
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.readOnlyRootFilesystem set to true"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                readOnlyRootFilesystem: true
+      selector:
+        matchLabels:
+          app: nginx

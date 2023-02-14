@@ -1,0 +1,100 @@
+- name: "securityContext not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.privileged not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: proxy
+              image: proxy
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsNonRoot: true
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.privileged set to true"
+  pass: false
+  message: "Container running in privileged mode"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: proxy
+              image: proxy
+            - name: nginx
+              image: nginx
+              securityContext:
+                privileged: true
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "initContainer securityContext.privileged set to true"
+  pass: false
+  message: "Container running in privileged mode"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          initContainers:
+            - name: init
+              image: busybox
+              securityContext:
+                privileged: true
+          containers:
+            - name: proxy
+              image: proxy
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx

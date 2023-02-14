@@ -1,0 +1,136 @@
+- name: "allowedRegistries param not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "docker.io allowed"
+  pass: true
+  params:
+    allowedRegistries: [docker.io, ghcr.io]
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "docker.io allowed and container using full name"
+  pass: true
+  params:
+    allowedRegistries: [docker.io, ghcr.io]
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: docker.io/library/nginx:latest
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "ghcr.io allowed"
+  pass: true
+  params:
+    allowedRegistries: [docker.io, ghcr.io]
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: ghcr.io/nginx/nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "docker.io/library allowed"
+  pass: true
+  params:
+    allowedRegistries: ["docker.io/library", ghcr.io]
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "not allowed"
+  pass: false
+  message: "Container image registry not allowed"
+  params:
+    allowedRegistries: [docker.io, ghcr.io]
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: gcr.io/nginx
+      selector:
+        matchLabels:
+          app: nginx

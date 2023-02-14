@@ -1,0 +1,118 @@
+- name: "securityContext not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Pod explicitly set runAsUser to 0 and Container to 1000"
+  pass: false
+  message: "Container running as root user"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsUser: 0
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsUser: 1000
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container explicitly set runAsUser to 0 and Pod to 1000"
+  pass: false
+  message: "Container running as root user"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsUser: 1000
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsUser: 0
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container set runAsUser to 1000 and Pod not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsUser: 1000
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Pod set runAsUser to 1000 and Container not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsUser: 1000
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx

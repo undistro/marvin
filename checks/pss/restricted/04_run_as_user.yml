@@ -1,0 +1,32 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser_test.go
+id: run-as-non-root-user
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  - expression: >
+      (!has(podSpec.securityContext) || !has(podSpec.securityContext.runAsUser) || podSpec.securityContext.runAsUser > 0)
+      &&
+      allContainers.all(container,
+        !has(container.securityContext) || !has(container.securityContext.runAsUser) || container.securityContext.runAsUser > 0
+      )
+    message: "Container running as root user"

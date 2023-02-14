@@ -1,0 +1,44 @@
+id: ssh-server
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+    - group: ""
+      version: v1
+      resource: services
+params:
+  sshPorts: [22, 2222]
+validations:
+  - expression: >
+      object.kind != 'Service' ||
+      !has(object.spec.ports) ||
+      object.spec.ports.all(p,
+        !(p.port in params.sshPorts) &&
+        (!has(p.targetPort) || !(p.targetPort in params.sshPorts))
+      )
+    message: "Service could be routing to SSH server"
+
+  - expression: >
+      allContainers.all(container,
+        !has(container.ports) ||
+        container.ports.all(port,
+          !(port.containerPort in params.sshPorts)
+        )
+      )
+    message: "Container could be running SSH server"

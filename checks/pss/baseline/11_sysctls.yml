@@ -1,0 +1,40 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_sysctls.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_sysctls_test.go
+id: sysctls
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+params:
+  allowedSysctls:
+    - kernel.shm_rmid_forced
+    - net.ipv4.ip_local_port_range
+    - net.ipv4.ip_unprivileged_port_start
+    - net.ipv4.tcp_syncookies
+    - net.ipv4.ping_group_range
+validations:
+  - expression: >
+      !has(podSpec.securityContext) ||
+      !has(podSpec.securityContext.sysctls) ||
+      podSpec.securityContext.sysctls.all(s,
+        s.name == null ||
+        s.name in params.allowedSysctls
+      )
+    message: "Pod using unsafe sysctls"

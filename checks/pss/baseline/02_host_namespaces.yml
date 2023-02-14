@@ -1,0 +1,30 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces_test.go
+id: host-namespaces
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  - expression: >
+      (!has(podSpec.hostNetwork) || podSpec.hostNetwork == false) &&
+      (!has(podSpec.hostPID) || podSpec.hostPID == false) &&
+      (!has(podSpec.hostIPC) || podSpec.hostIPC == false)
+    message: "Pod sharing host namespace"

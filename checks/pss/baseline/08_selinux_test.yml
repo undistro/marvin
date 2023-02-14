@@ -1,0 +1,265 @@
+- name: "securityContext not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.seLinuxOptions not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsNonRoot: true
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.seLinuxOptions.type not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.seLinuxOptions.type set to an empty string"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              type: ""
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.seLinuxOptions.type set to container_t"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              type: container_t
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.seLinuxOptions.type set to spc_t"
+  pass: false
+  message: "Pod with not allowed SELinux type"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              type: spc_t
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container securityContext.seLinuxOptions.type set to spc_t"
+  pass: false
+  message: "Container with not allowed SELinux type"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              type: ""
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                seLinuxOptions:
+                  type: spc_t
+                  level: "s0:c123,c456"
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container securityContext.seLinuxOptions.type set to container_init_t and Pod to spc_t"
+  pass: false
+  message: "Pod with not allowed SELinux type"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              type: spc_t
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                seLinuxOptions:
+                  type: container_init_t
+                  level: "s0:c123,c456"
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container securityContext.seLinuxOptions.user set to foo"
+  pass: false
+  message: "Container with forbidden SELinux user"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              type: null
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                seLinuxOptions:
+                  user: foo
+                  role: null
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Pod securityContext.seLinuxOptions.role set to bar"
+  pass: false
+  message: "Pod with forbidden SELinux role"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seLinuxOptions:
+              type: null
+              role: bar
+              user: ''
+              level: "s0:c123,c456"
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                seLinuxOptions:
+                  user: null
+                  role: null
+      selector:
+        matchLabels:
+          app: nginx

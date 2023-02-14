@@ -1,0 +1,37 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts_test.go
+id: host-ports
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+params:
+  allowedHostPorts: []
+validations:
+  - expression: >
+      allContainers.all(container,
+        !has(container.ports) ||
+        container.ports.all(port,
+          !has(port.hostPort) ||
+          port.hostPort == 0 ||
+          port.hostPort in params.allowedHostPorts
+        )
+      )
+    message: "Container exposing not allowed port on the host"

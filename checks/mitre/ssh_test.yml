@@ -1,0 +1,187 @@
+- name: "Service with no ports"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+    spec:
+      selector:
+        app: nginx
+      type: ClusterIP
+
+- name: "Service with empty ports"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+    spec:
+      ports: []
+      selector:
+        app: nginx
+      type: ClusterIP
+
+- name: "Service with no SSH ports"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+    spec:
+      ports:
+        - port: 80
+      selector:
+        app: nginx
+      type: ClusterIP
+
+- name: "Service with SSH port"
+  pass: false
+  message: "Service could be routing to SSH server"
+  input: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+    spec:
+      ports:
+        - port: 22
+          targetPort: 80
+      selector:
+        app: nginx
+      type: ClusterIP
+
+- name: "Service with SSH targetPort"
+  pass: false
+  message: "Service could be routing to SSH server"
+  input: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+    spec:
+      ports:
+        - port: 8080
+          targetPort: 8080
+        - port: 80
+          targetPort: 2222
+      selector:
+        app: nginx
+      type: ClusterIP
+
+- name: "Container with no ports"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container with empty ports"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              ports: []
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container with no SSH ports"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              ports:
+                - containerPort: 80
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container with SSH port"
+  pass: false
+  message: "Container could be running SSH server"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              ports:
+                - containerPort: 80
+                - containerPort: 22
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container with SSH port 2222"
+  pass: false
+  message: "Container could be running SSH server"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              ports:
+                - containerPort: 2222
+      selector:
+        matchLabels:
+          app: nginx

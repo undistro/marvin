@@ -1,0 +1,31 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged_test.go
+id: privileged-containers
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  - expression: >
+      allContainers.all(container,
+        !has(container.securityContext) ||
+        !has(container.securityContext.privileged) ||
+        container.securityContext.privileged == false)
+    message: "Container running in privileged mode"

@@ -1,0 +1,141 @@
+- name: "securityContext not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+- name: "securityContext.seccompProfile not specified"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsNonRoot: true
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                runAsNonRoot: true
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "securityContext.seccompProfile.type set to RuntimeDefault"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+- name: "securityContext.seccompProfile.type set to Localhost"
+  pass: true
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                seccompProfile:
+                  type: Localhost
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Container securityContext.seccompProfile.type set to Unconfined"
+  pass: false
+  message: "Container using forbidden seccomp profile"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          containers:
+            - name: nginx
+              image: nginx
+              securityContext:
+                seccompProfile:
+                  type: Unconfined
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Pod securityContext.seccompProfile.type set to Unconfined"
+  pass: false
+  message: "Pod using forbidden seccomp profile"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            seccompProfile:
+              type: Unconfined
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx

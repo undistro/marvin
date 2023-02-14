@@ -1,0 +1,48 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline_test.go
+id: capabilities-added
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+params:
+  allowedCapabilities:
+    - AUDIT_WRITE
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - FSETID
+    - KILL
+    - MKNOD
+    - NET_BIND_SERVICE
+    - SETFCAP
+    - SETGID
+    - SETPCAP
+    - SETUID
+    - SYS_CHROOT
+validations:
+  - expression: >
+      allContainers.all(container,
+        !has(container.securityContext) ||
+        !has(container.securityContext.capabilities) ||
+        !has(container.securityContext.capabilities.add) ||
+        container.securityContext.capabilities.add.all(cap, cap in params.allowedCapabilities)
+      )
+    message: "Container running with not allowed capabilities"

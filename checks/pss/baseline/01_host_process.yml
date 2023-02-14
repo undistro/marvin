@@ -1,0 +1,38 @@
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_windowsHostProcess.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_windowsHostProcess_test.go
+id: host-process
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
+validations:
+  - expression: >
+      !has(podSpec.securityContext) || 
+      !has(podSpec.securityContext.windowsOptions) || 
+      !has(podSpec.securityContext.windowsOptions.hostProcess) || 
+      podSpec.securityContext.windowsOptions.hostProcess == false
+    message: "Pod with privileged access to the Windows node"
+  - expression: >
+      allContainers.all(container,
+        !has(container.securityContext) ||
+        !has(container.securityContext.windowsOptions) ||
+        !has(container.securityContext.windowsOptions.hostProcess) ||
+        container.securityContext.windowsOptions.hostProcess == false)
+    message: "Container with privileged access to the Windows node"
