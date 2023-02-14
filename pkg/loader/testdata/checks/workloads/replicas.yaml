@@ -1,0 +1,9 @@
+id: resources
+match:
+  resources:
+    - group: apps
+      version: v1
+      resource: deployments
+validations:
+  - expression: "object.spec.replicas <= 2"
+    message: "minimum quantity of replicas (2) not reached"

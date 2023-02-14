@@ -1,0 +1,18 @@
+{
+  "id": "svclb",
+  "match": {
+    "resources": [
+      {
+        "group": "",
+        "version": "v1",
+        "resource": "services"
+      }
+    ]
+  },
+  "validations": [
+    {
+      "expression": "object.spec.type != 'LoadBalancer'",
+      "message": "Type Loadbalancer detected. Could be expensive"
+    }
+  ]
+}
