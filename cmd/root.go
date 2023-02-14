@@ -29,7 +29,7 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "marvin",
-	Short: "a Kubernetes cluster scanner",
+	Short: "A Kubernetes cluster scanner",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
