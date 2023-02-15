@@ -13,26 +13,40 @@ import (
 	"github.com/undistro/marvin/pkg/checks"
 )
 
+type (
+	ChecksMap    map[string]checks.Check
+	TestsMap     map[string][]checks.Test
+	readFileFunc func(string) ([]byte, error)
+)
+
 var supportedExt = map[string]bool{
 	".yaml": true,
 	".yml":  true,
 	".json": true,
 }
 
-func LoadChecks(root string) (map[string]checks.Check, error) {
+func LoadChecks(root string) (ChecksMap, error) {
 	c, _, err := load(root)
 	return c, err
 }
 
-func LoadChecksAndTests(root string) (map[string]checks.Check, map[string][]checks.Test, error) {
+func LoadChecksAndTests(root string) (ChecksMap, TestsMap, error) {
 	return load(root)
 }
 
-func load(root string) (map[string]checks.Check, map[string][]checks.Test, error) {
-	tests := make(map[string][]checks.Test)
-	check := make(map[string]checks.Check)
+func load(root string) (ChecksMap, TestsMap, error) {
+	check, tests, walkFn := walkDir(os.ReadFile)
+	err := filepath.WalkDir(root, walkFn)
+	if err != nil {
+		return nil, nil, err
+	}
+	return check, tests, nil
+}
 
-	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+func walkDir(readFileFn readFileFunc) (ChecksMap, TestsMap, fs.WalkDirFunc) {
+	tests := make(TestsMap)
+	check := make(ChecksMap)
+	return check, tests, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return err
 		}
@@ -40,7 +54,7 @@ func load(root string) (map[string]checks.Check, map[string][]checks.Test, error
 		if !supportedExt[ext] {
 			return nil // unsupported file
 		}
-		bs, err := os.ReadFile(path)
+		bs, err := readFileFn(path)
 		if err != nil {
 			return err
 		}
@@ -63,11 +77,7 @@ func load(root string) (map[string]checks.Check, map[string][]checks.Test, error
 		k := strings.TrimSuffix(path, ext)
 		check[k] = c
 		return nil
-	})
-	if err != nil {
-		return nil, nil, err
 	}
-	return check, tests, nil
 }
 
 func parseCheck(ext string, bs []byte) (checks.Check, error) {
