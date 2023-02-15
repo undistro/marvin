@@ -1,4 +1,4 @@
-package builtins
+package test
 
 import (
 	"testing"
@@ -12,7 +12,7 @@ import (
 )
 
 func TestBuiltinChecks(t *testing.T) {
-	checks, tests, err := loader.LoadChecksAndTests(".")
+	checks, tests, err := loader.LoadChecksAndTests("../internal/builtins/")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, checks)
 	assert.GreaterOrEqual(t, len(checks), len(tests))
