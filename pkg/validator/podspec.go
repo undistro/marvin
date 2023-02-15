@@ -11,10 +11,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/undistro/marvin/pkg/scan"
+	"github.com/undistro/marvin/pkg/checks"
 )
 
-func MatchesPodSpec(rules []scan.ResourceRule) bool {
+func MatchesPodSpec(rules []checks.ResourceRule) bool {
 	for _, r := range rules {
 		gr := r.ToGVR().GroupResource()
 		if defaultPodSpecResources[gr] {
