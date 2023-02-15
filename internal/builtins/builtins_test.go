@@ -1,4 +1,4 @@
-package checks
+package builtins
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ import (
 	"github.com/undistro/marvin/pkg/validator"
 )
 
-func TestChecks(t *testing.T) {
+func TestBuiltinChecks(t *testing.T) {
 	checks, tests, err := loader.LoadChecksAndTests(".")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, checks)
