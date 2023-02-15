@@ -1,4 +1,4 @@
-package checks
+package scan
 
 import (
 	"k8s.io/apimachinery/pkg/runtime/schema"

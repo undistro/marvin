@@ -10,7 +10,7 @@ import (
 
 	"sigs.k8s.io/yaml"
 
-	"github.com/undistro/marvin/pkg/checks"
+	"github.com/undistro/marvin/pkg/scan"
 )
 
 var supportedExt = map[string]bool{
@@ -19,18 +19,18 @@ var supportedExt = map[string]bool{
 	".json": true,
 }
 
-func LoadChecks(root string) (map[string]checks.Check, error) {
-	c, _, err := load(root)
-	return c, err
+func LoadChecks(root string) (map[string]scan.Check, error) {
+	checks, _, err := load(root)
+	return checks, err
 }
 
-func LoadChecksAndTests(root string) (map[string]checks.Check, map[string][]checks.Test, error) {
+func LoadChecksAndTests(root string) (map[string]scan.Check, map[string][]scan.Test, error) {
 	return load(root)
 }
 
-func load(root string) (map[string]checks.Check, map[string][]checks.Test, error) {
-	tests := make(map[string][]checks.Test)
-	check := make(map[string]checks.Check)
+func load(root string) (map[string]scan.Check, map[string][]scan.Test, error) {
+	tests := make(map[string][]scan.Test)
+	checks := make(map[string]scan.Check)
 
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
@@ -61,22 +61,22 @@ func load(root string) (map[string]checks.Check, map[string][]checks.Test, error
 			return err
 		}
 		k := strings.TrimSuffix(path, ext)
-		check[k] = c
+		checks[k] = c
 		return nil
 	})
 	if err != nil {
 		return nil, nil, err
 	}
-	return check, tests, nil
+	return checks, tests, nil
 }
 
-func parseCheck(ext string, bs []byte) (checks.Check, error) {
-	obj := checks.Check{}
+func parseCheck(ext string, bs []byte) (scan.Check, error) {
+	obj := scan.Check{}
 	return parse(ext, bs, obj)
 }
 
-func parseTests(ext string, bs []byte) ([]checks.Test, error) {
-	var obj []checks.Test
+func parseTests(ext string, bs []byte) ([]scan.Test, error) {
+	var obj []scan.Test
 	return parse(ext, bs, obj)
 }
 

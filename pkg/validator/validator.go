@@ -12,7 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 	k8scellib "k8s.io/apiserver/pkg/cel/library"
 
-	"github.com/undistro/marvin/pkg/checks"
+	"github.com/undistro/marvin/pkg/scan"
 )
 
 const (
@@ -26,14 +26,14 @@ const (
 )
 
 type CELValidator struct {
-	check       checks.Check
+	check       scan.Check
 	programs    []cel.Program
 	hasPodSpec  bool
 	apiVersions []string
 	kubeVersion *version.Info
 }
 
-func Compile(check checks.Check, apiResources []*metav1.APIResourceList, kubeVersion *version.Info) (Validator, error) {
+func Compile(check scan.Check, apiResources []*metav1.APIResourceList, kubeVersion *version.Info) (Validator, error) {
 	if len(check.Validations) == 0 {
 		return nil, errors.New("invalid check: a check must have at least 1 validation")
 	}
