@@ -35,7 +35,7 @@ func LoadChecksAndTests(root string) (ChecksMap, TestsMap, error) {
 }
 
 func load(root string) (ChecksMap, TestsMap, error) {
-	check, tests, walkFn := walkDir(os.ReadFile)
+	check, tests, walkFn := walkDir(os.ReadFile, "")
 	err := filepath.WalkDir(root, walkFn)
 	if err != nil {
 		return nil, nil, err
@@ -43,7 +43,7 @@ func load(root string) (ChecksMap, TestsMap, error) {
 	return check, tests, nil
 }
 
-func walkDir(readFileFn readFileFunc) (ChecksMap, TestsMap, fs.WalkDirFunc) {
+func walkDir(readFileFn readFileFunc, prefix string) (ChecksMap, TestsMap, fs.WalkDirFunc) {
 	tests := make(TestsMap)
 	check := make(ChecksMap)
 	return check, tests, func(path string, d fs.DirEntry, err error) error {
@@ -75,7 +75,7 @@ func walkDir(readFileFn readFileFunc) (ChecksMap, TestsMap, fs.WalkDirFunc) {
 			return err
 		}
 		k := strings.TrimSuffix(path, ext)
-		check[k] = c
+		check[prefix+k] = c
 		return nil
 	}
 }
