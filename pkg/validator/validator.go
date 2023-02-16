@@ -125,18 +125,22 @@ func (r *CELValidator) setPodSpecParams(obj unstructured.Unstructured, input *ac
 }
 
 func newEnv(podSpec bool) (*cel.Env, error) {
-	var opts []cel.EnvOption
-	opts = append(opts, cel.HomogeneousAggregateLiterals())
-	opts = append(opts, cel.EagerlyValidateDeclarations(true), cel.DefaultUTCTimeZone(true))
+	opts := []cel.EnvOption{
+		cel.HomogeneousAggregateLiterals(),
+		cel.EagerlyValidateDeclarations(true),
+		cel.DefaultUTCTimeZone(true),
+		cel.Variable(ObjectVarName, cel.DynType),
+		cel.Variable(ParamsVarName, cel.DynType),
+		cel.Variable(APIVersionsVarName, cel.ListType(cel.StringType)),
+		cel.Variable(KubeVersionVarName, cel.DynType),
+	}
 	opts = append(opts, k8scellib.ExtensionLibs...)
-	opts = append(opts, cel.Variable(ObjectVarName, cel.DynType))
-	opts = append(opts, cel.Variable(ParamsVarName, cel.DynType))
-	opts = append(opts, cel.Variable(APIVersionsVarName, cel.ListType(cel.StringType)))
-	opts = append(opts, cel.Variable(KubeVersionVarName, cel.DynType))
 	if podSpec {
-		opts = append(opts, cel.Variable(PodMetaVarName, cel.DynType))
-		opts = append(opts, cel.Variable(PodSpecVarName, cel.DynType))
-		opts = append(opts, cel.Variable(AllContainersVarName, cel.ListType(cel.DynType)))
+		opts = append(opts,
+			cel.Variable(PodMetaVarName, cel.DynType),
+			cel.Variable(PodSpecVarName, cel.DynType),
+			cel.Variable(AllContainersVarName, cel.ListType(cel.DynType)),
+		)
 	}
 	return cel.NewEnv(opts...)
 }
