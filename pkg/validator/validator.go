@@ -124,16 +124,6 @@ func (r *CELValidator) setPodSpecParams(obj unstructured.Unstructured, input *ac
 	return nil
 }
 
-func (r *CELValidator) Matches(obj unstructured.Unstructured, resource string) bool {
-	gvr := obj.GroupVersionKind().GroupVersion().WithResource(resource)
-	for _, res := range r.check.Match.Resources {
-		if res.ToGVR() == gvr {
-			return true
-		}
-	}
-	return false
-}
-
 func newEnv(podSpec bool) (*cel.Env, error) {
 	var opts []cel.EnvOption
 	opts = append(opts, cel.HomogeneousAggregateLiterals())

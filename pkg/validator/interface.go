@@ -7,7 +7,6 @@ import (
 
 type Validator interface {
 	Validate(obj unstructured.Unstructured, params any) (bool, string, error)
-	Matches(obj unstructured.Unstructured, resource string) bool
 	SetAPIVersions(apiVersions []string)
 	SetKubeVersion(v *version.Info)
 }
