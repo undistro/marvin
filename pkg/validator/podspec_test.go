@@ -87,7 +87,7 @@ func TestMatchesPodSpec(t *testing.T) {
 	}
 }
 
-func TestDefaultExtractPodSpec(t *testing.T) {
+func TestExtractPodSpec(t *testing.T) {
 	metadata := map[string]any{
 		"name": "foo-pod",
 	}
@@ -218,4 +218,60 @@ func TestDefaultExtractPodSpec(t *testing.T) {
 	}
 	_, _, err := ExtractPodSpec(unstructured.Unstructured{Object: service})
 	assert.Error(t, err, "service should not have an extractable pod spec")
+}
+
+func TestExtractAllContainers(t *testing.T) {
+	tests := []struct {
+		name    string
+		podSpec *corev1.PodSpec
+		want    []corev1.Container
+	}{
+		{
+			name:    "single container",
+			podSpec: &corev1.PodSpec{Containers: []corev1.Container{{Name: "foo"}}},
+			want:    []corev1.Container{{Name: "foo"}},
+		},
+		{
+			name: "init container",
+			podSpec: &corev1.PodSpec{
+				Containers:     []corev1.Container{{Name: "foo"}},
+				InitContainers: []corev1.Container{{Name: "init"}},
+			},
+			want: []corev1.Container{
+				{Name: "foo"},
+				{Name: "init"},
+			},
+		},
+		{
+			name: "init container and sidecar",
+			podSpec: &corev1.PodSpec{
+				Containers:     []corev1.Container{{Name: "proxy"}, {Name: "foo"}},
+				InitContainers: []corev1.Container{{Name: "init"}},
+			},
+			want: []corev1.Container{
+				{Name: "proxy"},
+				{Name: "foo"},
+				{Name: "init"},
+			},
+		},
+		{
+			name: "ephemeral container",
+			podSpec: &corev1.PodSpec{
+				Containers:          []corev1.Container{{Name: "proxy"}, {Name: "foo"}},
+				InitContainers:      []corev1.Container{{Name: "init"}},
+				EphemeralContainers: []corev1.EphemeralContainer{{EphemeralContainerCommon: corev1.EphemeralContainerCommon{Name: "ephemeral"}}},
+			},
+			want: []corev1.Container{
+				{Name: "proxy"},
+				{Name: "foo"},
+				{Name: "init"},
+				{Name: "ephemeral"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, extractAllContainers(tt.podSpec), "extractAllContainers(%v)", tt.podSpec)
+		})
+	}
 }
