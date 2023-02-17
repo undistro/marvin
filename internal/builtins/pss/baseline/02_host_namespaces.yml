@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces_test.go
 id: host-namespaces
+severity: High
+message: "Pod sharing host namespace"
 match:
   resources:
     - group: apps
