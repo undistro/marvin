@@ -21,7 +21,7 @@
 
 - name: "Pod explicitly set runAsUser to 0 and Container to 1000"
   pass: false
-  message: "Container running as root user"
+  message: "Container running as root UID"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -47,7 +47,7 @@
 
 - name: "Container explicitly set runAsUser to 0 and Pod to 1000"
   pass: false
-  message: "Container running as root user"
+  message: "Container running as root UID"
   input: |
     apiVersion: apps/v1
     kind: Deployment

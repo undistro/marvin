@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser_test.go
 id: run-as-non-root-user
+severity: Low
+message: "Container running as root UID"
 match:
   resources:
     - group: apps
@@ -29,4 +31,4 @@ validations:
       allContainers.all(container,
         !has(container.securityContext) || !has(container.securityContext.runAsUser) || container.securityContext.runAsUser > 0
       )
-    message: "Container running as root user"
+    message: "Container running as root UID"
