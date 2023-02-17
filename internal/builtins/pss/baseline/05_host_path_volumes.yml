@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes_test.go
 id: host-path-volumes
+severity: High
+message: "Pod with mounted host volume"
 match:
   resources:
     - group: apps
