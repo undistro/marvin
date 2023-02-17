@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_baseline.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_baseline_test.go
 id: seccomp-baseline
+severity: Medium
+message: "Container using forbidden seccomp profile"
 match:
   resources:
     - group: apps
