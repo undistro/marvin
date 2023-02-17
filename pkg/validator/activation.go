@@ -4,6 +4,16 @@ import (
 	"github.com/google/cel-go/interpreter"
 )
 
+const (
+	ObjectVarName        = "object"
+	ParamsVarName        = "params"
+	PodMetaVarName       = "podMeta"
+	PodSpecVarName       = "podSpec"
+	AllContainersVarName = "allContainers"
+	APIVersionsVarName   = "apiVersions"
+	KubeVersionVarName   = "kubeVersion"
+)
+
 type activation struct {
 	object        map[string]any
 	podMeta       map[string]any

@@ -12,16 +12,6 @@ import (
 	"github.com/undistro/marvin/pkg/checks"
 )
 
-const (
-	ObjectVarName        = "object"
-	ParamsVarName        = "params"
-	PodMetaVarName       = "podMeta"
-	PodSpecVarName       = "podSpec"
-	AllContainersVarName = "allContainers"
-	APIVersionsVarName   = "apiVersions"
-	KubeVersionVarName   = "kubeVersion"
-)
-
 type CELValidator struct {
 	check       checks.Check
 	programs    []cel.Program
