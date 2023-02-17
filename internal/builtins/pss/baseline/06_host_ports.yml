@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts_test.go
 id: host-ports
+severity: High
+message: "Container exposing not allowed port on the host"
 match:
   resources:
     - group: apps
