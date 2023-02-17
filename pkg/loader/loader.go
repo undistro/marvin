@@ -19,15 +19,26 @@ type (
 	readFileFunc func(string) ([]byte, error)
 )
 
+func (cm ChecksMap) toList() []checks.Check {
+	if cm == nil {
+		return nil
+	}
+	list := make([]checks.Check, 0, len(cm))
+	for _, c := range cm {
+		list = append(list, c)
+	}
+	return list
+}
+
 var supportedExt = map[string]bool{
 	".yaml": true,
 	".yml":  true,
 	".json": true,
 }
 
-func LoadChecks(root string) (ChecksMap, error) {
+func LoadChecks(root string) ([]checks.Check, error) {
 	c, _, err := load(root)
-	return c, err
+	return c.toList(), err
 }
 
 func LoadChecksAndTests(root string) (ChecksMap, TestsMap, error) {
@@ -35,7 +46,7 @@ func LoadChecksAndTests(root string) (ChecksMap, TestsMap, error) {
 }
 
 func load(root string) (ChecksMap, TestsMap, error) {
-	check, tests, walkFn := walkDir(os.ReadFile, "")
+	check, tests, walkFn := walkDir(os.ReadFile, false)
 	err := filepath.WalkDir(root, walkFn)
 	if err != nil {
 		return nil, nil, err
@@ -43,7 +54,7 @@ func load(root string) (ChecksMap, TestsMap, error) {
 	return check, tests, nil
 }
 
-func walkDir(readFileFn readFileFunc, prefix string) (ChecksMap, TestsMap, fs.WalkDirFunc) {
+func walkDir(readFileFn readFileFunc, builtin bool) (ChecksMap, TestsMap, fs.WalkDirFunc) {
 	tests := make(TestsMap)
 	check := make(ChecksMap)
 	return check, tests, func(path string, d fs.DirEntry, err error) error {
@@ -74,8 +85,13 @@ func walkDir(readFileFn readFileFunc, prefix string) (ChecksMap, TestsMap, fs.Wa
 		if err != nil {
 			return err
 		}
+		c.Builtin = builtin
+		c.Path = path
 		k := strings.TrimSuffix(path, ext)
-		check[prefix+k] = c
+		if builtin {
+			k = "builtin:" + k
+		}
+		check[k] = c
 		return nil
 	}
 }

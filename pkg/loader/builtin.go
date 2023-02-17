@@ -5,15 +5,16 @@ import (
 	"log"
 
 	"github.com/undistro/marvin/internal/builtins"
+	"github.com/undistro/marvin/pkg/checks"
 )
 
-var Builtins ChecksMap
+var Builtins []checks.Check
 
 func init() {
-	checks, _, walkFn := walkDir(builtins.EmbbedChecksFS.ReadFile, "builtin:")
+	c, _, walkFn := walkDir(builtins.EmbbedChecksFS.ReadFile, true)
 	err := fs.WalkDir(builtins.EmbbedChecksFS, ".", walkFn)
 	if err != nil {
 		log.Fatal(err)
 	}
-	Builtins = checks
+	Builtins = c.toList()
 }
