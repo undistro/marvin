@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline_test.go
 id: capabilities-added
+severity: High
+message: "Container running with not allowed capabilities"
 match:
   resources:
     - group: apps
