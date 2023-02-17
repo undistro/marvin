@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged_test.go
 id: privileged-containers
+severity: High
+message: "Container running in privileged mode"
 match:
   resources:
     - group: apps
