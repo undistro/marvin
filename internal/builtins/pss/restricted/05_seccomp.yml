@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_restricted.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_restricted_test.go
 id: seccomp-restricted
+severity: Low
+message: "Seccomp profile must be explicitly set to one of the allowed values"
 match:
   resources:
     - group: apps
