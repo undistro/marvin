@@ -10,6 +10,9 @@ type Check struct {
 	Match       Match          `json:"match"`
 	Validations []Validation   `json:"validations"`
 	Params      map[string]any `json:"params"`
+
+	Builtin bool   `json:"builtin"`
+	Path    string `json:"path"`
 }
 
 type Match struct {
