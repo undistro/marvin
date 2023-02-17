@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile_test.go
 id: apparmor
+severity: Medium
+message: "Container running with forbidden AppArmor profile"
 match:
   resources:
     - group: apps
