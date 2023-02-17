@@ -2,6 +2,8 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_procMount.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_procMount_test.go
 id: proc-mount
+severity: Medium
+message: "Container using forbidden proc mount type"
 match:
   resources:
     - group: apps
