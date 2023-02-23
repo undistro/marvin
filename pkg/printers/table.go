@@ -5,8 +5,10 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 
+	"github.com/undistro/marvin/pkg/checks"
 	"github.com/undistro/marvin/pkg/report"
 )
 
@@ -40,7 +42,7 @@ func renderTable(r report.Report, t *tablewriter.Table) {
 	})
 	for _, c := range r.Checks {
 		t.Append([]string{
-			c.Severity.String(),
+			colorSeverity(c.Severity),
 			c.Message,
 			strconv.Itoa(len(c.Failed)),
 			strconv.Itoa(len(c.Passed)),
@@ -48,4 +50,19 @@ func renderTable(r report.Report, t *tablewriter.Table) {
 		})
 	}
 	t.Render()
+}
+
+func colorSeverity(s checks.Severity) string {
+	switch s {
+	case checks.SeverityLow:
+		return color.BlueString("%s", s)
+	case checks.SeverityMedium:
+		return color.YellowString("%s", s)
+	case checks.SeverityHigh:
+		return color.RedString("%s", s)
+	case checks.SeverityCritical:
+		return color.RedString("%s", s)
+	default:
+		return s.String()
+	}
 }

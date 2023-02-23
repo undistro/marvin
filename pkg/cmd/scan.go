@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fatih/color"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/version"
@@ -30,6 +31,7 @@ type ScanOptions struct {
 	ChecksPath     *string
 	DisableBuiltIn *bool
 	OutputFormat   *string
+	NoColor        *bool
 
 	printer      printers.Printer
 	client       *dynamic.DynamicClient
@@ -44,6 +46,7 @@ func NewScanOptions() *ScanOptions {
 		ChecksPath:     pointer.String(""),
 		DisableBuiltIn: pointer.Bool(false),
 		OutputFormat:   pointer.String("table"),
+		NoColor:        pointer.Bool(false),
 	}
 }
 
@@ -57,7 +60,10 @@ func (o *ScanOptions) AddFlags(flags *pflag.FlagSet) {
 		flags.BoolVar(o.DisableBuiltIn, "disable-builtin", *o.DisableBuiltIn, "Disable builtin checks")
 	}
 	if o.OutputFormat != nil {
-		flags.StringVarP(o.OutputFormat, "output", "o", *o.OutputFormat, `Output format. One of: ("table", "json", "yaml" or "markdown").`)
+		flags.StringVarP(o.OutputFormat, "output", "o", *o.OutputFormat, `Output format. One of: ("table", "json", "yaml" or "markdown")`)
+	}
+	if o.NoColor != nil {
+		flags.BoolVar(o.NoColor, "no-color", *o.NoColor, "Disable color output")
 	}
 }
 
@@ -79,6 +85,8 @@ func (o *ScanOptions) Validate() error {
 
 // Init initializes the kubernetes clients, get server version and API resources
 func (o *ScanOptions) Init() error {
+	color.NoColor = *o.NoColor
+
 	var printer printers.Printer
 	switch *o.OutputFormat {
 	case "json":
