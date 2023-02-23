@@ -29,7 +29,13 @@ var (
 	scanCmd = &cobra.Command{
 		Use:   "scan",
 		Short: "Scan a Kubernetes cluster",
+		PreRunE: func(c *cobra.Command, args []string) error {
+			return scanOptions.Validate()
+		},
 		RunE: func(c *cobra.Command, args []string) error {
+			if err := scanOptions.Init(); err != nil {
+				return err
+			}
 			if err := scanOptions.Run(); err != nil {
 				return err
 			}
