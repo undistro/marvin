@@ -1,4 +1,6 @@
 id: resources
+severity: Low
+message: "minimum quantity of replicas (2) not reached"
 match:
   resources:
     - group: apps

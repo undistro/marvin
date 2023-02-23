@@ -1,5 +1,7 @@
 {
   "id": "svclb",
+  "message": "Type Loadbalancer detected. Could be expensive",
+  "severity": "Low",
   "match": {
     "resources": [
       {
