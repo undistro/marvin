@@ -29,8 +29,8 @@ type CheckResult struct {
 	Builtin  bool            `json:"builtin"`
 	Path     string          `json:"path"`
 
-	Passed  map[string][]string `json:"passed"`
 	Failed  map[string][]string `json:"failed"`
+	Passed  map[string][]string `json:"passed"`
 	Skipped map[string][]string `json:"skipped"`
 	Errors  []string            `json:"errors"`
 }
@@ -43,20 +43,10 @@ func NewCheckResult(c checks.Check) *CheckResult {
 		Builtin:  c.Builtin,
 		Path:     c.Path,
 
-		Passed:  map[string][]string{},
 		Failed:  map[string][]string{},
+		Passed:  map[string][]string{},
 		Skipped: map[string][]string{},
 		Errors:  []string{},
-	}
-}
-
-func (r *CheckResult) AddPassed(obj unstructured.Unstructured) {
-	k := key(obj)
-	v := value(obj)
-	if _, ok := r.Passed[k]; ok {
-		r.Passed[k] = append(r.Passed[k], v)
-	} else {
-		r.Passed[k] = []string{v}
 	}
 }
 
@@ -67,6 +57,16 @@ func (r *CheckResult) AddFailed(obj unstructured.Unstructured) {
 		r.Failed[k] = append(r.Failed[k], v)
 	} else {
 		r.Failed[k] = []string{v}
+	}
+}
+
+func (r *CheckResult) AddPassed(obj unstructured.Unstructured) {
+	k := key(obj)
+	v := value(obj)
+	if _, ok := r.Passed[k]; ok {
+		r.Passed[k] = append(r.Passed[k], v)
+	} else {
+		r.Passed[k] = []string{v}
 	}
 }
 
