@@ -1,4 +1,6 @@
 id: ssh-server
+severity: Low
+message: "SSH server running inside container"
 match:
   resources:
     - group: apps
