@@ -1,4 +1,6 @@
 id: registry
+severity: Medium
+message: "Container image registry not allowed"
 match:
   resources:
     - group: apps
