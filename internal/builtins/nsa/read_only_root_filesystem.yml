@@ -1,4 +1,6 @@
 id: read-only-root-filesystem
+severity: Low
+message: "Container is able to write to the root filesystem"
 match:
   resources:
     - group: apps
