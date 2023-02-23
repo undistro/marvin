@@ -57,7 +57,7 @@ func (o *ScanOptions) AddFlags(flags *pflag.FlagSet) {
 		flags.BoolVar(o.DisableBuiltIn, "disable-builtin", *o.DisableBuiltIn, "Disable builtin checks")
 	}
 	if o.OutputFormat != nil {
-		flags.StringVarP(o.OutputFormat, "output", "o", *o.OutputFormat, `Output format. One of: ('table', json', 'yaml').`)
+		flags.StringVarP(o.OutputFormat, "output", "o", *o.OutputFormat, `Output format. One of: ("table", "json", "yaml" or "markdown").`)
 	}
 }
 
@@ -79,6 +79,20 @@ func (o *ScanOptions) Validate() error {
 
 // Init initializes the kubernetes clients, get server version and API resources
 func (o *ScanOptions) Init() error {
+	var printer printers.Printer
+	switch *o.OutputFormat {
+	case "json":
+		printer = &printers.JSONPrinter{}
+	case "yaml":
+		printer = &printers.YAMLPrinter{}
+	case "table":
+		printer = &printers.TablePrinter{}
+	case "markdown":
+		printer = &printers.MarkdownPrinter{}
+	default:
+		return fmt.Errorf("invalid output format '%s'", *o.OutputFormat)
+	}
+
 	dynamicClient, err := o.ToDynamicClient()
 	if err != nil {
 		return fmt.Errorf("dynamic client error: %s", err.Error())
@@ -94,18 +108,6 @@ func (o *ScanOptions) Init() error {
 	_, apiResources, err := discoveryClient.ServerGroupsAndResources()
 	if err != nil {
 		return fmt.Errorf("server groups error: %s", err.Error())
-	}
-
-	var printer printers.Printer
-	switch *o.OutputFormat {
-	case "json":
-		printer = &printers.JSONPrinter{}
-	case "yaml":
-		printer = &printers.YAMLPrinter{}
-	case "table":
-		printer = &printers.TablePrinter{}
-	default:
-		return fmt.Errorf("invalid output format '%s'", *o.OutputFormat)
 	}
 
 	o.client = dynamicClient
