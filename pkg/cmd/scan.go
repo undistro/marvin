@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/fatih/color"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -32,6 +33,7 @@ type ScanOptions struct {
 	DisableBuiltIn *bool
 	OutputFormat   *string
 	NoColor        *bool
+	SkipAnnotation *string
 
 	printer      printers.Printer
 	client       *dynamic.DynamicClient
@@ -47,6 +49,7 @@ func NewScanOptions() *ScanOptions {
 		DisableBuiltIn: pointer.Bool(false),
 		OutputFormat:   pointer.String("table"),
 		NoColor:        pointer.Bool(false),
+		SkipAnnotation: pointer.String("marvin.undistro.io/skip"),
 	}
 }
 
@@ -64,6 +67,9 @@ func (o *ScanOptions) AddFlags(flags *pflag.FlagSet) {
 	}
 	if o.NoColor != nil {
 		flags.BoolVar(o.NoColor, "no-color", *o.NoColor, "Disable color output")
+	}
+	if o.SkipAnnotation != nil {
+		flags.StringVar(o.SkipAnnotation, "skip-annotation", *o.SkipAnnotation, "Annotation name for skipping checks")
 	}
 }
 
@@ -157,6 +163,10 @@ func (o *ScanOptions) Run() error {
 			}
 		}
 		for _, obj := range resources {
+			if o.IsSkipped(check.ID, obj.GetAnnotations()) {
+				cr.AddSkipped(obj)
+				continue
+			}
 			passed, _, err := v.Validate(obj, check.Params)
 			if err != nil {
 				cr.AddError(fmt.Errorf("%s validate error: %s", check.Path, err.Error()))
@@ -187,4 +197,21 @@ func (o *ScanOptions) getChecks() ([]checks.Check, error) {
 		allChecks = append(allChecks, localChecks...)
 	}
 	return allChecks, nil
+}
+
+func (o *ScanOptions) IsSkipped(checkID string, annotations map[string]string) bool {
+	if annotations == nil {
+		return false
+	}
+	v, ok := annotations[*o.SkipAnnotation]
+	if !ok {
+		return false
+	}
+	ids := strings.Split(v, ",")
+	for _, s := range ids {
+		if strings.TrimSpace(s) == checkID {
+			return true
+		}
+	}
+	return false
 }
