@@ -33,7 +33,7 @@ func (*TablePrinter) PrintObj(r report.Report, w io.Writer) error {
 }
 
 func renderTable(r report.Report, t *tablewriter.Table) {
-	t.SetHeader([]string{"SEVERITY", "CHECK", "FAILED", "PASSED", "SKIPPED"})
+	t.SetHeader([]string{"SEVERITY", "ID", "CHECK", "FAILED", "PASSED", "SKIPPED"})
 	sort.Slice(r.Checks, func(i, j int) bool {
 		if r.Checks[i].Severity != r.Checks[j].Severity {
 			return r.Checks[i].Severity > r.Checks[j].Severity
@@ -43,6 +43,7 @@ func renderTable(r report.Report, t *tablewriter.Table) {
 	for _, c := range r.Checks {
 		t.Append([]string{
 			colorSeverity(c.Severity),
+			c.ID,
 			c.Message,
 			strconv.Itoa(len(c.Failed)),
 			strconv.Itoa(len(c.Passed)),
