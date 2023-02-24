@@ -14,9 +14,12 @@ COPY pkg/ pkg/
 
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o marvin main.go
 
-FROM gcr.io/distroless/static:nonroot
+FROM alpine:3.17.2
+
+RUN addgroup -g 8494 -S nonroot && adduser -u 8494 -D -S nonroot -G nonroot
+USER 8494:8494
+
 WORKDIR /
 COPY --from=builder /workspace/marvin .
-USER 65532:65532
 
 ENTRYPOINT ["/marvin"]
