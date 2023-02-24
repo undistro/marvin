@@ -30,6 +30,16 @@ vet: ## Run go vet against code.
 test: fmt vet ## Run tests.
 	go test ./... -coverprofile cover.out
 
+.PHONY: addlicense
+addlicense: ## Add copyright license headers in source code files
+	@test -s $(LOCALBIN)/addlicense || GOBIN=$(LOCALBIN) go install github.com/google/addlicense@latest
+	$(LOCALBIN)/addlicense -c "Undistro Authors" -l "apache" -v $$(find . -name '*.go')
+
+.PHONY: checklicense
+checklicense: ## Check copyright license headers in source code files
+	@test -s $(LOCALBIN)/addlicense || GOBIN=$(LOCALBIN) go install github.com/google/addlicense@latest
+	$(LOCALBIN)/addlicense -check -c "Undistro Authors" -l "apache" -v $$(find . -name '*.go')
+
 ##@ Build
 
 .PHONY: build
@@ -47,3 +57,8 @@ docker-build: test ## Build docker image with.
 .PHONY: docker-push
 docker-push: ## Push docker image.
 	docker push ${IMG}
+
+## Location to install dependencies to
+LOCALBIN ?= $(shell pwd)/bin
+$(LOCALBIN):
+	mkdir -p $(LOCALBIN)
