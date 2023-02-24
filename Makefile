@@ -33,12 +33,12 @@ test: fmt vet ## Run tests.
 .PHONY: addlicense
 addlicense: ## Add copyright license headers in source code files
 	@test -s $(LOCALBIN)/addlicense || GOBIN=$(LOCALBIN) go install github.com/google/addlicense@latest
-	$(LOCALBIN)/addlicense -c "Undistro Authors" -l "apache" -v $$(find . -name '*.go')
+	$(LOCALBIN)/addlicense -c "Undistro Authors" -l "apache" -v $$(find -regex '.*\.\(go\|yml\|yaml\)')
 
 .PHONY: checklicense
 checklicense: ## Check copyright license headers in source code files
 	@test -s $(LOCALBIN)/addlicense || GOBIN=$(LOCALBIN) go install github.com/google/addlicense@latest
-	$(LOCALBIN)/addlicense -check -c "Undistro Authors" -l "apache" -v $$(find . -name '*.go')
+	$(LOCALBIN)/addlicense -check -c "Undistro Authors" -l "apache" -v $$(find -regex '.*\.\(go\|yml\|yaml\)')
 
 ##@ Build
 
