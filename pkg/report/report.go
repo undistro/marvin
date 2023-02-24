@@ -51,33 +51,15 @@ func NewCheckResult(c checks.Check) *CheckResult {
 }
 
 func (r *CheckResult) AddFailed(obj unstructured.Unstructured) {
-	k := key(obj)
-	v := value(obj)
-	if _, ok := r.Failed[k]; ok {
-		r.Failed[k] = append(r.Failed[k], v)
-	} else {
-		r.Failed[k] = []string{v}
-	}
+	addResource(obj, r.Failed)
 }
 
 func (r *CheckResult) AddPassed(obj unstructured.Unstructured) {
-	k := key(obj)
-	v := value(obj)
-	if _, ok := r.Passed[k]; ok {
-		r.Passed[k] = append(r.Passed[k], v)
-	} else {
-		r.Passed[k] = []string{v}
-	}
+	addResource(obj, r.Passed)
 }
 
 func (r *CheckResult) AddSkipped(obj unstructured.Unstructured) {
-	k := key(obj)
-	v := value(obj)
-	if _, ok := r.Skipped[k]; ok {
-		r.Skipped[k] = append(r.Skipped[k], v)
-	} else {
-		r.Skipped[k] = []string{v}
-	}
+	addResource(obj, r.Skipped)
 }
 
 func (r *CheckResult) AddError(err error) {
@@ -94,4 +76,14 @@ func value(obj unstructured.Unstructured) string {
 		return fmt.Sprintf("%s/%s", obj.GetNamespace(), obj.GetName())
 	}
 	return obj.GetName()
+}
+
+func addResource(obj unstructured.Unstructured, m map[string][]string) {
+	k := key(obj)
+	v := value(obj)
+	if _, ok := m[k]; ok {
+		m[k] = append(m[k], v)
+	} else {
+		m[k] = []string{v}
+	}
 }
