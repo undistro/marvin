@@ -29,6 +29,7 @@ type CheckResult struct {
 	Builtin  bool            `json:"builtin"`
 	Path     string          `json:"path"`
 
+	Status  CheckStatus         `json:"status"`
 	Failed  map[string][]string `json:"failed"`
 	Passed  map[string][]string `json:"passed"`
 	Skipped map[string][]string `json:"skipped"`
@@ -64,6 +65,23 @@ func (r *CheckResult) AddSkipped(obj unstructured.Unstructured) {
 
 func (r *CheckResult) AddError(err error) {
 	r.Errors = append(r.Errors, err.Error())
+}
+
+func (r *CheckResult) UpdateStatus() {
+	if len(r.Errors) > 0 {
+		r.Status = StatusError
+		return
+	}
+	if len(r.Failed) > 0 {
+		r.Status = StatusFailed
+		return
+	}
+	if len(r.Passed) == 0 && len(r.Skipped) > 0 {
+		r.Status = StatusSkipped
+		return
+	}
+	r.Status = StatusPassed
+	return
 }
 
 func key(obj unstructured.Unstructured) string {

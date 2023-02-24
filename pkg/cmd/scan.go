@@ -178,6 +178,7 @@ func (o *ScanOptions) Run() error {
 				cr.AddFailed(obj)
 			}
 		}
+		cr.UpdateStatus()
 	}
 
 	return o.printer.PrintObj(*rep, o.Out)
