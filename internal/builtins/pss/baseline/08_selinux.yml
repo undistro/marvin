@@ -17,7 +17,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seLinuxOptions_test.go
 id: selinux
 severity: Medium
-message: "Container with not allowed SELinux options"
+message: "Forbidden SELinux options"
 match:
   resources:
     - group: apps

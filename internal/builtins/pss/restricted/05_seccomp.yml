@@ -17,7 +17,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_restricted_test.go
 id: seccomp-restricted
 severity: Low
-message: "Seccomp profile must be explicitly set to one of the allowed values"
+message: "Not allowed seccomp profile"
 match:
   resources:
     - group: apps
@@ -51,7 +51,7 @@ validations:
         has(container.securityContext.seccompProfile) &&
         has(container.securityContext.seccompProfile.type)
       )
-    message: "Seccomp profile must be explicitly set to one of the allowed values"
+    message: "Seccomp profile not set"
 
   # Neither Pod nor Containers should set `securityContext.seccompProfile.type` to Unconfined
   - expression: >
@@ -68,4 +68,4 @@ validations:
         !has(container.securityContext.seccompProfile.type) || 
         container.securityContext.seccompProfile.type != 'Unconfined'
       )
-    message: "Seccomp profile must be explicitly set to one of the allowed values"
+    message: "Forbidden seccomp profile"

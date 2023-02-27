@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: read-only-root-filesystem
+id: read-only-root-fs
 severity: Low
-message: "Container is able to write to the root filesystem"
+message: "Root filesystem write allowed"
 match:
   resources:
     - group: apps

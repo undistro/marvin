@@ -81,7 +81,7 @@
 
 - name: "securityContext.allowPrivilegeEscalation set to true"
   pass: false
-  message: "Container with privilege escalation enabled"
+  message: "Container with allowed privilege escalation"
   input: |
     apiVersion: apps/v1
     kind: Deployment

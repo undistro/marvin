@@ -15,7 +15,7 @@
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser_test.go
-id: run-as-non-root-user
+id: run-as-user
 severity: Low
 message: "Container running as root UID"
 match:

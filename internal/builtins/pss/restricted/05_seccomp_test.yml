@@ -14,7 +14,7 @@
 
 - name: "securityContext not specified"
   pass: false
-  message: "Seccomp profile must be explicitly set to one of the allowed values"
+  message: "Seccomp profile not set"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -36,7 +36,7 @@
 
 - name: "securityContext.seccompProfile not specified"
   pass: false
-  message: "Seccomp profile must be explicitly set to one of the allowed values"
+  message: "Seccomp profile not set"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -110,7 +110,7 @@
 
 - name: "Container securityContext.seccompProfile.type set to Unconfined"
   pass: false
-  message: "Seccomp profile must be explicitly set to one of the allowed values"
+  message: "Forbidden seccomp profile"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -138,7 +138,7 @@
 
 - name: "Pod securityContext.seccompProfile.type set to Unconfined"
   pass: false
-  message: "Seccomp profile must be explicitly set to one of the allowed values"
+  message: "Forbidden seccomp profile"
   input: |
     apiVersion: apps/v1
     kind: Deployment

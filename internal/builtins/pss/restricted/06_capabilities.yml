@@ -17,7 +17,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_restricted_test.go
 id: capabilities
 severity: Low
-message: "Containers must drop ALL capabilities, and are only permitted to add back the NET_BIND_SERVICE capability"
+message: "Not allowed added/dropped capabilities"
 match:
   resources:
     - group: apps

@@ -17,7 +17,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes_test.go
 id: volume-types
 severity: Low
-message: "Not allowed volume type used"
+message: "Not allowed volume type"
 match:
   resources:
     - group: apps

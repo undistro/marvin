@@ -17,7 +17,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_windowsHostProcess_test.go
 id: host-process
 severity: High
-message: "Container with privileged access to the Windows node"
+message: "Privileged access to the Windows node"
 match:
   resources:
     - group: apps

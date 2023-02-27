@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: registry
+id: image-registry
 severity: Medium
-message: "Container image registry not allowed"
+message: "Image registry not allowed"
 match:
   resources:
     - group: apps

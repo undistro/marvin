@@ -17,7 +17,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_sysctls_test.go
 id: sysctls
 severity: Medium
-message: "Pod using unsafe sysctls"
+message: "Unsafe sysctls"
 match:
   resources:
     - group: apps

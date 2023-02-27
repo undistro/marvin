@@ -17,7 +17,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_allowPrivilegeEscalation_test.go
 id: privilege-escalation
 severity: Medium
-message: "Container with privilege escalation enabled"
+message: "Allowed privilege escalation"
 match:
   resources:
     - group: apps
@@ -45,4 +45,4 @@ validations:
         !has(container.securityContext.allowPrivilegeEscalation) ||
         container.securityContext.allowPrivilegeEscalation == false
       )
-    message: "Container with privilege escalation enabled"
+    message: "Container with allowed privilege escalation"
