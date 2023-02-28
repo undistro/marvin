@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: resources
+id: replicas
 severity: Low
 message: "minimum quantity of replicas (2) not reached"
 match:
