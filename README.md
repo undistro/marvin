@@ -102,6 +102,8 @@ validations:
     message: "Deployment with more than 5 replicas"
 ```
 
+If an expression evaluates to `false`, the check fails.
+
 Then you can provide the directory path with your custom check files in the `-f/--checks` flag:
 
 ```shell
