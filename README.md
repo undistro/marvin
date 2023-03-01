@@ -83,7 +83,7 @@ You can provide `json` or `yaml` in the `-o/--output` flag to get more details.
 
 ## Custom checks
 
-Marvin allows you to write your own checks by using CEL expressions in a YAML file like the example below.
+Marvin allows you to write your own checks by using [CEL expressions](https://github.com/google/cel-spec) in a YAML file like the example below.
 
 ```yaml
 id: example-replicas
