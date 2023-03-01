@@ -115,6 +115,11 @@ The flag `--disable-builtin` disables the built-in Marvin checks.
 This is how built-in Marvin checks are defined as well. 
 You can see all the built-in checks in the [`internal/builtins` folder](internal/builtins) for examples.
 
+If the check matches a PodSpec (`Pod`, `ReplicationController`, `ReplicaSet`, `Deployment`, `StatefulSet`, `DaemonSet`, `Job` or `CronJob`)
+the `podSpec` and `allContainers` inputs are available for expressions.
+
+The `allContainers` input is a list of all containers including `initContainers` and `ephemeralContainers`.
+
 # Contributing
 
 We appreciate your contribution.
