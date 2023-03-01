@@ -81,6 +81,8 @@ Low        run-as-user             Container running as root UID                
 The default output format is `table` which represents a summary of checks result. 
 You can provide `json` or `yaml` in the `-o/--output` flag to get more details.
 
+Run `marvin scan --help` to see all available options.
+
 ## Custom checks
 
 Marvin allows you to write your own checks by using [CEL expressions](https://github.com/google/cel-spec) in a YAML file like the example below.
