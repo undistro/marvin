@@ -17,6 +17,7 @@ It helps ensure that your Kubernetes clusters are always in compliance with best
 * [Usage](#usage)
   * [Built-in checks](#built-in-checks)
   * [Custom checks](#custom-checks)
+  * [Skipping resources](#skipping-resources)
 * [Contributing](#contributing)
 * [License](#license)
 <!-- TOC -->
@@ -126,6 +127,25 @@ If the check matches a PodSpec (`Pod`, `ReplicationController`, `ReplicaSet`, `D
 the `podSpec` and `allContainers` inputs are available for expressions.
 
 The `allContainers` input is a list of all containers including `initContainers` and `ephemeralContainers`.
+
+## Skipping resources
+
+You can use annotations to skip certain checks for specific resources in your cluster.
+By adding the `marvin.undistro.io/skip` annotation to a resource, 
+you can specify a comma-separated list of check IDs to skip.
+
+Example:
+```shell
+kubectl annotate deployment nginx marvin.undistro.io/skip='auto-mount-sa-token, volume-types'
+```
+
+By default, Marvin will respect the `marvin.undistro.io/skip` annotation when performing checks. 
+However, you can disable this behavior by using the `--disable-annotation-skip` flag.
+This flag will cause Marvin to perform all checks on all resources.
+
+If you prefer to use a different annotation to skip checks, 
+you can use the `--skip-annotation` flag to specify the annotation name. 
+Example `--skip-annotation='my-company.com/skip-checks'`
 
 # Contributing
 
