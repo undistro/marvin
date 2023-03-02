@@ -44,7 +44,7 @@ checklicense: ## Check copyright license headers in source code files
 
 .PHONY: build
 build: fmt vet ## Build marvin binary.
-	go build -o bin/marvin main.go
+	go build -ldflags="-s -w -X github.com/undistro/marvin/pkg/version.version=${TAG}" -o bin/marvin main.go
 
 .PHONY: run
 run: fmt vet ## Run marvin from your host.

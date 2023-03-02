@@ -15,34 +15,46 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+	"encoding/json"
+	"fmt"
 
-	"github.com/undistro/marvin/pkg/cmd"
+	"github.com/spf13/cobra"
+	"sigs.k8s.io/yaml"
+
+	"github.com/undistro/marvin/pkg/version"
 )
 
 var (
-	scanOptions = cmd.NewScanOptions()
-
-	// scanCmd represents the scan command
-	scanCmd = &cobra.Command{
-		Use:   "scan [flags]",
-		Short: "Scan a Kubernetes cluster",
-		PreRunE: func(c *cobra.Command, args []string) error {
-			return scanOptions.Validate()
-		},
+	versionOutput string
+	versionCmd    = &cobra.Command{
+		Use:   "version",
+		Short: "Show the version of Marvin",
 		RunE: func(c *cobra.Command, args []string) error {
-			if err := scanOptions.Init(); err != nil {
-				return err
+			v := version.Get()
+			var s string
+			switch versionOutput {
+			case "json":
+				b, err := json.MarshalIndent(&v, "", "    ")
+				if err != nil {
+					return err
+				}
+				s = string(b)
+			case "yaml":
+				b, err := yaml.Marshal(&v)
+				if err != nil {
+					return err
+				}
+				s = string(b)
+			default:
+				s = v.String()
 			}
-			if err := scanOptions.Run(); err != nil {
-				return err
-			}
+			fmt.Println(s)
 			return nil
 		},
 	}
 )
 
 func init() {
-	rootCmd.AddCommand(scanCmd)
-	scanOptions.AddFlags(scanCmd.Flags())
+	rootCmd.AddCommand(versionCmd)
+	versionCmd.Flags().StringVarP(&versionOutput, "output", "o", "", `Output format. One of: ("json", "yaml")`)
 }

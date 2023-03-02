@@ -8,6 +8,14 @@ builds:
       - linux
       - windows
       - darwin
+    ldflags:
+      - >-
+          -s -w
+          -X github.com/undistro/marvin/pkg/version.version={{.Version}}
+          -X github.com/undistro/marvin/pkg/version.major={{.Major}}
+          -X github.com/undistro/marvin/pkg/version.minor={{.Minor}}
+          -X github.com/undistro/marvin/pkg/version.commit={{.Commit}} 
+          -X github.com/undistro/marvin/pkg/version.date={{.Date}} 
 
 archives:
   - format: tar.gz
