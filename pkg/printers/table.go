@@ -60,7 +60,10 @@ func renderTable(r report.Report, t *tablewriter.Table) {
 		if r.Checks[i].Severity != r.Checks[j].Severity {
 			return r.Checks[i].Severity > r.Checks[j].Severity
 		}
-		return len(r.Checks[i].Failed) > len(r.Checks[j].Failed)
+		if r.Checks[i].TotalFailed != r.Checks[j].TotalFailed {
+			return r.Checks[i].TotalFailed > r.Checks[j].TotalFailed
+		}
+		return r.Checks[i].TotalPassed > r.Checks[j].TotalPassed
 	})
 	for _, c := range r.Checks {
 		t.Append([]string{
@@ -68,9 +71,9 @@ func renderTable(r report.Report, t *tablewriter.Table) {
 			c.ID,
 			c.Message,
 			colorStatus(c.Status),
-			strconv.Itoa(len(c.Failed)),
-			strconv.Itoa(len(c.Passed)),
-			strconv.Itoa(len(c.Skipped)),
+			strconv.Itoa(c.TotalFailed),
+			strconv.Itoa(c.TotalPassed),
+			strconv.Itoa(c.TotalSkipped),
 		})
 	}
 	t.Render()

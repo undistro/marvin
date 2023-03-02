@@ -48,6 +48,10 @@ type CheckResult struct {
 	Passed  map[string][]string `json:"passed"`
 	Skipped map[string][]string `json:"skipped"`
 	Errors  []string            `json:"errors"`
+
+	TotalFailed  int `json:"totalFailed"`
+	TotalPassed  int `json:"totalPassed"`
+	TotalSkipped int `json:"totalSkipped"`
 }
 
 func NewCheckResult(c checks.Check) *CheckResult {
@@ -67,14 +71,17 @@ func NewCheckResult(c checks.Check) *CheckResult {
 
 func (r *CheckResult) AddFailed(obj unstructured.Unstructured) {
 	addResource(obj, r.Failed)
+	r.TotalFailed++
 }
 
 func (r *CheckResult) AddPassed(obj unstructured.Unstructured) {
 	addResource(obj, r.Passed)
+	r.TotalPassed++
 }
 
 func (r *CheckResult) AddSkipped(obj unstructured.Unstructured) {
 	addResource(obj, r.Skipped)
+	r.TotalSkipped++
 }
 
 func (r *CheckResult) AddError(err error) {
