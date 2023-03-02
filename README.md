@@ -145,7 +145,7 @@ This flag will cause Marvin to perform all checks on all resources.
 
 If you prefer to use a different annotation to skip checks, 
 you can use the `--skip-annotation` flag to specify the annotation name. 
-Example `--skip-annotation='my-company.com/skip-checks'`
+Example: `--skip-annotation='my-company.com/skip-checks'`
 
 # Contributing
 
