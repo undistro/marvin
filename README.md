@@ -107,6 +107,9 @@ validations:
 
 If an expression evaluates to `false`, the check fails.
 
+This is how built-in Marvin checks are defined as well.
+You can see all the built-in checks in the [`internal/builtins` folder](internal/builtins) for examples.
+
 Then you can provide the directory path with your custom check files in the `-f/--checks` flag:
 
 ```shell
@@ -118,9 +121,6 @@ Medium     example-replicas   Replicas limit   Passed   0        3        0
 ```
 
 The flag `--disable-builtin` disables the built-in Marvin checks.
-
-This is how built-in Marvin checks are defined as well. 
-You can see all the built-in checks in the [`internal/builtins` folder](internal/builtins) for examples.
 
 If the check matches a PodSpec (`Pod`, `ReplicationController`, `ReplicaSet`, `Deployment`, `StatefulSet`, `DaemonSet`, `Job` or `CronJob`)
 the `podSpec` and `allContainers` inputs are available for expressions.
