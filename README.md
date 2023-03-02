@@ -15,6 +15,7 @@ It helps ensure that your Kubernetes clusters are always in compliance with best
   * [Install script](#install-script)
   * [From source](#from-source)
 * [Usage](#usage)
+  * [Built-in checks](#built-in-checks)
   * [Custom checks](#custom-checks)
 * [Contributing](#contributing)
 * [License](#license)
@@ -47,6 +48,8 @@ go install github.com/undistro/marvin@latest
 ```
 
 # Usage
+
+## Built-in checks
 
 Scan the current-context Kubernetes cluster performing the [built-in checks](internal/builtins):
 ```shell
