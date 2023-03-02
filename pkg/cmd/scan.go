@@ -43,11 +43,12 @@ type ScanOptions struct {
 	*genericclioptions.ConfigFlags
 	genericclioptions.IOStreams
 
-	ChecksPath     *string
-	DisableBuiltIn *bool
-	OutputFormat   *string
-	NoColor        *bool
-	SkipAnnotation *string
+	ChecksPath            *string
+	DisableBuiltIn        *bool
+	OutputFormat          *string
+	NoColor               *bool
+	SkipAnnotation        *string
+	DisableAnnotationSkip *bool
 
 	printer      printers.Printer
 	client       *dynamic.DynamicClient
@@ -57,13 +58,14 @@ type ScanOptions struct {
 
 func NewScanOptions() *ScanOptions {
 	return &ScanOptions{
-		ConfigFlags:    genericclioptions.NewConfigFlags(false),
-		IOStreams:      genericclioptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr},
-		ChecksPath:     pointer.String(""),
-		DisableBuiltIn: pointer.Bool(false),
-		OutputFormat:   pointer.String("table"),
-		NoColor:        pointer.Bool(false),
-		SkipAnnotation: pointer.String("marvin.undistro.io/skip"),
+		ConfigFlags:           genericclioptions.NewConfigFlags(false),
+		IOStreams:             genericclioptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr},
+		ChecksPath:            pointer.String(""),
+		DisableBuiltIn:        pointer.Bool(false),
+		OutputFormat:          pointer.String("table"),
+		NoColor:               pointer.Bool(false),
+		DisableAnnotationSkip: pointer.Bool(false),
+		SkipAnnotation:        pointer.String("marvin.undistro.io/skip"),
 	}
 }
 
@@ -84,6 +86,9 @@ func (o *ScanOptions) AddFlags(flags *pflag.FlagSet) {
 	}
 	if o.SkipAnnotation != nil {
 		flags.StringVar(o.SkipAnnotation, "skip-annotation", *o.SkipAnnotation, "Annotation name for skipping checks")
+	}
+	if o.DisableAnnotationSkip != nil {
+		flags.BoolVar(o.DisableAnnotationSkip, "disable-annotation-skip", *o.DisableAnnotationSkip, "Disable resource skipping by annotation")
 	}
 }
 
@@ -216,6 +221,9 @@ func (o *ScanOptions) getChecks() ([]checks.Check, error) {
 
 func (o *ScanOptions) IsSkipped(checkID string, annotations map[string]string) bool {
 	if annotations == nil {
+		return false
+	}
+	if *o.DisableAnnotationSkip {
 		return false
 	}
 	v, ok := annotations[*o.SkipAnnotation]
