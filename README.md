@@ -54,28 +54,28 @@ marvin scan
 ```
 ```
 SEVERITY   ID                      CHECK                                                   STATUS   FAILED   PASSED   SKIPPED 
-High       capabilities-added      Insecure capabilities                                   Failed   1        3        0         
-High       app-credentials         Application credentials stored in configuration files   Failed   1        4        0         
-High       privileged-containers   Privileged container                                    Failed   1        3        0         
-High       host-namespaces         Host namespaces                                         Failed   1        2        0         
-High       host-path-volumes       HostPath volume                                         Failed   1        2        0         
-High       host-ports              Not allowed hostPort                                    Passed   0        3        0         
-High       host-process            Privileged access to the Windows node                   Passed   0        3        0         
-Medium     run-as-non-root         Container could be running as root user                 Failed   3        0        0         
-Medium     seccomp-baseline        Forbidden seccomp profile                               Passed   0        3        0         
-Medium     image-registry          Image registry not allowed                              Passed   0        3        0         
-Medium     privilege-escalation    Allowed privilege escalation                            Passed   0        3        0         
-Medium     sysctls                 Unsafe sysctls                                          Passed   0        3        0         
-Medium     selinux                 Forbidden SELinux options                               Passed   0        3        0         
-Medium     proc-mount              Forbidden proc mount type                               Passed   0        3        0         
-Medium     apparmor                Forbidden AppArmor profile                              Passed   0        3        0         
-Low        seccomp-restricted      Not allowed seccomp profile                             Failed   3        0        0         
-Low        read-only-root-fs       Root filesystem write allowed                           Failed   3        2        0         
-Low        auto-mount-sa-token     Automounted service account token                       Failed   3        0        0         
-Low        capabilities            Not allowed added/dropped capabilities                  Failed   3        0        0         
-Low        volume-types            Not allowed volume type                                 Failed   1        2        0         
-Low        ssh-server              SSH server running inside container                     Passed   0        4        0         
-Low        run-as-user             Container running as root UID                           Passed   0        3        0         
+High       app-credentials         Application credentials stored in configuration files   Failed   2        19       0         
+High       host-path-volumes       HostPath volume                                         Failed   2        6        0         
+High       host-namespaces         Host namespaces                                         Failed   2        6        0         
+High       capabilities-added      Insecure capabilities                                   Failed   1        7        0         
+High       privileged-containers   Privileged container                                    Failed   1        7        0         
+High       host-ports              Not allowed hostPort                                    Passed   0        8        0         
+High       host-process            Privileged access to the Windows node                   Passed   0        8        0         
+Medium     run-as-non-root         Container could be running as root user                 Failed   6        0        2         
+Medium     proc-mount              Forbidden proc mount type                               Passed   0        8        0         
+Medium     selinux                 Forbidden SELinux options                               Passed   0        8        0         
+Medium     seccomp-baseline        Forbidden seccomp profile                               Passed   0        8        0         
+Medium     sysctls                 Unsafe sysctls                                          Passed   0        8        0         
+Medium     privilege-escalation    Allowed privilege escalation                            Passed   0        8        0         
+Medium     apparmor                Forbidden AppArmor profile                              Passed   0        8        0         
+Medium     image-registry          Image registry not allowed                              Passed   0        8        0         
+Low        seccomp-restricted      Not allowed seccomp profile                             Failed   8        0        0         
+Low        capabilities            Not allowed added/dropped capabilities                  Failed   8        0        0         
+Low        auto-mount-sa-token     Automounted service account token                       Failed   8        0        0         
+Low        read-only-root-fs       Root filesystem write allowed                           Failed   6        2        0         
+Low        volume-types            Not allowed volume type                                 Failed   2        6        0         
+Low        ssh-server              SSH server running inside container                     Passed   0        11       0         
+Low        run-as-user             Container running as root UID                           Passed   0        8        0                  
 ```
 
 The default output format is `table` which represents a summary of checks result. 
@@ -111,7 +111,7 @@ marvin scan --disable-builtin --checks ./examples/
 ```
 ```
 SEVERITY   ID                 CHECK           STATUS   FAILED   PASSED   SKIPPED 
-Medium     example-replicas   Replica limit   Passed   0        1        0            
+Medium     example-replicas   Replica limit   Passed   0        3        0         
 ```
 
 The flag `--disable-builtin` disables the built-in Marvin checks.
