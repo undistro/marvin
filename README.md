@@ -93,7 +93,7 @@ Marvin allows you to write your own checks by using [CEL expressions](https://gi
 ```yaml
 id: example-replicas
 severity: Medium
-message: "Replica limit"
+message: "Replicas limit"
 match:
   resources:
     - group: apps
@@ -113,8 +113,8 @@ Then you can provide the directory path with your custom check files in the `-f/
 marvin scan --disable-builtin --checks ./examples/
 ```
 ```
-SEVERITY   ID                 CHECK           STATUS   FAILED   PASSED   SKIPPED 
-Medium     example-replicas   Replica limit   Passed   0        3        0         
+SEVERITY   ID                 CHECK            STATUS   FAILED   PASSED   SKIPPED 
+Medium     example-replicas   Replicas limit   Passed   0        3        0         
 ```
 
 The flag `--disable-builtin` disables the built-in Marvin checks.

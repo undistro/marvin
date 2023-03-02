@@ -14,7 +14,7 @@
 
 id: example-replicas
 severity: Medium
-message: "Replica limit"
+message: "Replicas limit"
 match:
   resources:
     - group: apps
