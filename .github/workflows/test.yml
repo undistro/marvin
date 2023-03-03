@@ -1,5 +1,9 @@
-name: pr
-on: [pull_request]
+name: Test
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
 jobs:
   validate:
     runs-on: ubuntu-latest
