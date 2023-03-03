@@ -1,5 +1,9 @@
 # Marvin
 
+[![Test](https://github.com/undistro/marvin/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/undistro/marvin/actions/workflows/test.yml)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/undistro/marvin?label=Release&sort=semver)
+![GitHub](https://img.shields.io/github/license/undistro/marvin?label=License)
+
 Marvin is a powerful CLI tool designed to help Kubernetes cluster administrators 
 ensure the security and reliability of their environments. 
 
