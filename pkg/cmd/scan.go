@@ -121,6 +121,7 @@ func (o *ScanOptions) Init() error {
 	case "table":
 		printer = &printers.TablePrinter{}
 	case "markdown":
+		color.NoColor = true
 		printer = &printers.MarkdownPrinter{}
 	default:
 		return fmt.Errorf("invalid output format '%s'", *o.OutputFormat)
