@@ -26,7 +26,8 @@ import (
 
 var (
 	versionOutput string
-	versionCmd    = &cobra.Command{
+	// versionCmd represents the version command
+	versionCmd = &cobra.Command{
 		Use:   "version",
 		Short: "Show the version of Marvin",
 		RunE: func(c *cobra.Command, args []string) error {
