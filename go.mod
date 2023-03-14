@@ -3,6 +3,7 @@ module github.com/undistro/marvin
 go 1.20
 
 require (
+	github.com/Masterminds/semver/v3 v3.2.0
 	github.com/fatih/color v1.14.1
 	github.com/google/cel-go v0.13.0
 	github.com/olekukonko/tablewriter v0.0.5
