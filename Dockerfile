@@ -15,6 +15,9 @@
 FROM golang:1.20 as builder
 ARG TARGETOS
 ARG TARGETARCH
+ARG VERSION
+ARG COMMIT
+ARG DATE
 
 WORKDIR /workspace
 COPY go.mod go.mod
@@ -26,7 +29,10 @@ COPY cmd/ cmd/
 COPY internal/ internal/
 COPY pkg/ pkg/
 
-RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o marvin main.go
+RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build \
+    -ldflags="-s -w -X github.com/undistro/marvin/pkg/version.version=${VERSION:-docker} \
+    -X github.com/undistro/marvin/pkg/version.commit=${COMMIT} \
+    -X github.com/undistro/marvin/pkg/version.date=${DATE}" -a -o marvin main.go
 
 FROM alpine:3.17.2
 

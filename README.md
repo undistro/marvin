@@ -35,7 +35,7 @@ and can be installed manually or via script.
 ## Manually
 
 1. Download the file for your system/architecture from the [GitHub releases page](https://github.com/undistro/marvin/releases)
-2. Unpack the downloaded archive (e.g `tar -xzf marvin_0.1.0_Linux_x86_64.tar.gz`)
+2. Unpack the downloaded archive (e.g `tar -xzf marvin_Linux_x86_64.tar.gz`)
 3. Make sure the binary has execution bit turned on (`chmod +x ./marvin`)
 4. Move the binary somewhere in your `$PATH` (e.g `sudo mv ./marvin /usr/local/bin/`)
 

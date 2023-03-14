@@ -14,18 +14,20 @@
 
 package version
 
+import (
+	"github.com/Masterminds/semver/v3"
+)
+
 var (
 	version = "dev"
-	major   = ""
-	minor   = ""
 	commit  = ""
 	date    = ""
 )
 
 type Info struct {
 	Version string `json:"version"`
-	Major   string `json:"major"`
-	Minor   string `json:"minor"`
+	Major   uint64 `json:"major"`
+	Minor   uint64 `json:"minor"`
 	Commit  string `json:"commit"`
 	Date    string `json:"date"`
 }
@@ -35,11 +37,15 @@ func (i Info) String() string {
 }
 
 func Get() Info {
-	return Info{
+	i := &Info{
 		Version: version,
-		Major:   major,
-		Minor:   minor,
 		Commit:  commit,
 		Date:    date,
 	}
+	v, err := semver.NewVersion(version)
+	if err == nil {
+		i.Major = v.Major()
+		i.Minor = v.Minor()
+	}
+	return *i
 }
