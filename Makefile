@@ -56,13 +56,13 @@ docker-buildx: test ## Build and push docker image for cross-platform support.
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
 	- docker buildx create --name cross-builder
 	docker buildx use cross-builder
-	- docker buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
+	- docker buildx build --push --platform=$(PLATFORMS) --build-arg VERSION=${TAG} --tag ${IMG} -f Dockerfile.cross .
 	- docker buildx rm cross-builder
 	rm Dockerfile.cross
 
 .PHONY: docker-build
 docker-build: test ## Build docker image.
-	docker build -t ${IMG} .
+	docker build --build-arg VERSION=${TAG} -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image.
