@@ -50,8 +50,18 @@ build: fmt vet ## Build marvin binary.
 run: fmt vet ## Run marvin from your host.
 	go run ./main.go
 
+PLATFORMS ?= linux/arm64,linux/amd64,linux/s390x,linux/ppc64le
+.PHONY: docker-buildx
+docker-buildx: test ## Build and push docker image for cross-platform support.
+	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
+	- docker buildx create --name cross-builder
+	docker buildx use cross-builder
+	- docker buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
+	- docker buildx rm cross-builder
+	rm Dockerfile.cross
+
 .PHONY: docker-build
-docker-build: test ## Build docker image with.
+docker-build: test ## Build docker image.
 	docker build -t ${IMG} .
 
 .PHONY: docker-push
