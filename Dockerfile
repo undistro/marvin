@@ -30,7 +30,7 @@ COPY internal/ internal/
 COPY pkg/ pkg/
 
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build \
-    -ldflags="-s -w -X github.com/undistro/marvin/pkg/version.version=${VERSION} \
+    -ldflags="-s -w -X github.com/undistro/marvin/pkg/version.version=${VERSION:-docker} \
     -X github.com/undistro/marvin/pkg/version.commit=${COMMIT} \
     -X github.com/undistro/marvin/pkg/version.date=${DATE}" -a -o marvin main.go
 
