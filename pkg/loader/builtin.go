@@ -19,10 +19,10 @@ import (
 	"log"
 
 	"github.com/undistro/marvin/internal/builtins"
-	"github.com/undistro/marvin/pkg/checks"
+	"github.com/undistro/marvin/pkg/types"
 )
 
-var Builtins []checks.Check
+var Builtins []types.Check
 
 func init() {
 	c, _, walkFn := walkDir(builtins.EmbbedChecksFS.ReadFile, true)

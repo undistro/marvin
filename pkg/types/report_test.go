@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package report
+package types
 
 import (
 	"errors"
@@ -22,8 +22,6 @@ import (
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/version"
-
-	"github.com/undistro/marvin/pkg/checks"
 )
 
 var (
@@ -32,9 +30,9 @@ var (
 		Minor:      "25",
 		GitVersion: "v1.25.3",
 	}
-	check = checks.Check{
+	check = Check{
 		ID:       "foo",
-		Severity: checks.SeverityHigh,
+		Severity: SeverityHigh,
 		Message:  "bar",
 		Builtin:  true,
 		Path:     "path.yml",
@@ -42,7 +40,7 @@ var (
 )
 
 func TestReport(t *testing.T) {
-	rep := New(kubeVersion)
+	rep := NewReport(kubeVersion)
 	assert.NotNil(t, rep)
 	assert.NotNil(t, rep.KubeVersion)
 	assert.Equal(t, "25", rep.KubeVersion.Minor)
@@ -52,7 +50,7 @@ func TestReport(t *testing.T) {
 	assert.NotNil(t, cr)
 	assert.Equal(t, "foo", cr.ID)
 	assert.Equal(t, "bar", cr.Message)
-	assert.Equal(t, checks.SeverityHigh, cr.Severity)
+	assert.Equal(t, SeverityHigh, cr.Severity)
 	assert.True(t, cr.Builtin)
 	assert.Equal(t, "path.yml", cr.Path)
 	assert.Len(t, cr.Failed, 0)

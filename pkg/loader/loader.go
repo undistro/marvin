@@ -24,20 +24,20 @@ import (
 
 	"sigs.k8s.io/yaml"
 
-	"github.com/undistro/marvin/pkg/checks"
+	"github.com/undistro/marvin/pkg/types"
 )
 
 type (
-	ChecksMap    map[string]checks.Check
-	TestsMap     map[string][]checks.Test
+	ChecksMap    map[string]types.Check
+	TestsMap     map[string][]types.Test
 	readFileFunc func(string) ([]byte, error)
 )
 
-func (cm ChecksMap) toList() []checks.Check {
+func (cm ChecksMap) toList() []types.Check {
 	if cm == nil {
 		return nil
 	}
-	list := make([]checks.Check, 0, len(cm))
+	list := make([]types.Check, 0, len(cm))
 	for _, c := range cm {
 		list = append(list, c)
 	}
@@ -50,7 +50,7 @@ var supportedExt = map[string]bool{
 	".json": true,
 }
 
-func LoadChecks(root string) ([]checks.Check, error) {
+func LoadChecks(root string) ([]types.Check, error) {
 	c, _, err := load(root)
 	return c.toList(), err
 }
@@ -110,13 +110,13 @@ func walkDir(readFileFn readFileFunc, builtin bool) (ChecksMap, TestsMap, fs.Wal
 	}
 }
 
-func parseCheck(ext string, bs []byte) (checks.Check, error) {
-	obj := checks.Check{}
+func parseCheck(ext string, bs []byte) (types.Check, error) {
+	obj := types.Check{}
 	return parse(ext, bs, obj)
 }
 
-func parseTests(ext string, bs []byte) ([]checks.Test, error) {
-	var obj []checks.Test
+func parseTests(ext string, bs []byte) ([]types.Test, error) {
+	var obj []types.Test
 	return parse(ext, bs, obj)
 }
 

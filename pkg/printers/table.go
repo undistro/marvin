@@ -22,8 +22,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 
-	"github.com/undistro/marvin/pkg/checks"
-	"github.com/undistro/marvin/pkg/report"
+	"github.com/undistro/marvin/pkg/types"
 )
 
 var (
@@ -36,7 +35,7 @@ var (
 
 type TablePrinter struct{}
 
-func (*TablePrinter) PrintObj(r report.Report, w io.Writer) error {
+func (*TablePrinter) PrintObj(report types.Report, w io.Writer) error {
 	t := tablewriter.NewWriter(w)
 	t.SetAutoWrapText(false)
 	t.SetAutoFormatHeaders(true)
@@ -50,22 +49,22 @@ func (*TablePrinter) PrintObj(r report.Report, w io.Writer) error {
 	t.SetTablePadding("   ")
 	t.SetNoWhiteSpace(true)
 
-	renderTable(r, t)
+	renderTable(report, t)
 	return nil
 }
 
-func renderTable(r report.Report, t *tablewriter.Table) {
+func renderTable(report types.Report, t *tablewriter.Table) {
 	t.SetHeader([]string{"SEVERITY", "ID", "CHECK", "STATUS", "FAILED", "PASSED", "SKIPPED"})
-	sort.Slice(r.Checks, func(i, j int) bool {
-		if r.Checks[i].Severity != r.Checks[j].Severity {
-			return r.Checks[i].Severity > r.Checks[j].Severity
+	sort.Slice(report.Checks, func(i, j int) bool {
+		if report.Checks[i].Severity != report.Checks[j].Severity {
+			return report.Checks[i].Severity > report.Checks[j].Severity
 		}
-		if r.Checks[i].TotalFailed != r.Checks[j].TotalFailed {
-			return r.Checks[i].TotalFailed > r.Checks[j].TotalFailed
+		if report.Checks[i].TotalFailed != report.Checks[j].TotalFailed {
+			return report.Checks[i].TotalFailed > report.Checks[j].TotalFailed
 		}
-		return r.Checks[i].TotalPassed > r.Checks[j].TotalPassed
+		return report.Checks[i].TotalPassed > report.Checks[j].TotalPassed
 	})
-	for _, c := range r.Checks {
+	for _, c := range report.Checks {
 		t.Append([]string{
 			colorSeverity(c.Severity),
 			c.ID,
@@ -79,29 +78,29 @@ func renderTable(r report.Report, t *tablewriter.Table) {
 	t.Render()
 }
 
-func colorSeverity(s checks.Severity) string {
+func colorSeverity(s types.Severity) string {
 	switch s {
-	case checks.SeverityLow:
+	case types.SeverityLow:
 		return blue("%s", s)
-	case checks.SeverityMedium:
+	case types.SeverityMedium:
 		return yellow("%s", s)
-	case checks.SeverityHigh:
+	case types.SeverityHigh:
 		return red("%s", s)
-	case checks.SeverityCritical:
+	case types.SeverityCritical:
 		return redBold("%s", s)
 	default:
 		return s.String()
 	}
 }
-func colorStatus(s report.CheckStatus) string {
+func colorStatus(s types.CheckStatus) string {
 	switch s {
-	case report.StatusPassed:
+	case types.StatusPassed:
 		return green("%s", s)
-	case report.StatusSkipped:
+	case types.StatusSkipped:
 		return blue("%s", s)
-	case report.StatusFailed:
+	case types.StatusFailed:
 		return red("%s", s)
-	case report.StatusError:
+	case types.StatusError:
 		return redBold("%s", s)
 	default:
 		return s.String()

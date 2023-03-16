@@ -32,10 +32,9 @@ import (
 
 	"github.com/spf13/pflag"
 
-	"github.com/undistro/marvin/pkg/checks"
 	"github.com/undistro/marvin/pkg/loader"
 	"github.com/undistro/marvin/pkg/printers"
-	"github.com/undistro/marvin/pkg/report"
+	"github.com/undistro/marvin/pkg/types"
 	"github.com/undistro/marvin/pkg/validator"
 )
 
@@ -156,10 +155,10 @@ func (o *ScanOptions) Run() error {
 	if err != nil {
 		return err
 	}
-	rep := report.New(o.kubeVersion)
+	rep := types.NewReport(o.kubeVersion)
 	cache := make(map[string][]unstructured.Unstructured)
 	for _, check := range allChecks {
-		cr := report.NewCheckResult(check)
+		cr := types.NewCheckResult(check)
 		rep.Add(cr)
 		v, err := validator.Compile(check, o.apiResources, o.kubeVersion)
 		if err != nil {
@@ -205,8 +204,8 @@ func (o *ScanOptions) Run() error {
 }
 
 // getChecks returns a list of checks.Check based on the flags, including built-in checks or/and from a path.
-func (o *ScanOptions) getChecks() ([]checks.Check, error) {
-	var allChecks []checks.Check
+func (o *ScanOptions) getChecks() ([]types.Check, error) {
+	var allChecks []types.Check
 	if !*o.DisableBuiltIn {
 		allChecks = loader.Builtins
 	}

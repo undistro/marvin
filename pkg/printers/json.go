@@ -18,13 +18,13 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/undistro/marvin/pkg/report"
+	"github.com/undistro/marvin/pkg/types"
 )
 
 type JSONPrinter struct{}
 
-func (*JSONPrinter) PrintObj(r report.Report, w io.Writer) error {
-	data, err := json.MarshalIndent(r, "", "    ")
+func (*JSONPrinter) PrintObj(report types.Report, w io.Writer) error {
+	data, err := json.MarshalIndent(report, "", "    ")
 	if err != nil {
 		return err
 	}

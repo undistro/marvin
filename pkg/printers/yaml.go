@@ -20,13 +20,13 @@ import (
 
 	"sigs.k8s.io/yaml"
 
-	"github.com/undistro/marvin/pkg/report"
+	"github.com/undistro/marvin/pkg/types"
 )
 
 type YAMLPrinter struct{}
 
-func (*YAMLPrinter) PrintObj(r report.Report, w io.Writer) error {
-	data, err := yaml.Marshal(r)
+func (*YAMLPrinter) PrintObj(report types.Report, w io.Writer) error {
+	data, err := yaml.Marshal(report)
 	if err != nil {
 		return err
 	}

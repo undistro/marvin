@@ -19,12 +19,12 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 
-	"github.com/undistro/marvin/pkg/report"
+	"github.com/undistro/marvin/pkg/types"
 )
 
 type MarkdownPrinter struct{}
 
-func (*MarkdownPrinter) PrintObj(r report.Report, w io.Writer) error {
+func (*MarkdownPrinter) PrintObj(report types.Report, w io.Writer) error {
 	t := tablewriter.NewWriter(w)
 	t.SetAutoWrapText(false)
 	t.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
@@ -32,6 +32,6 @@ func (*MarkdownPrinter) PrintObj(r report.Report, w io.Writer) error {
 	t.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
 	t.SetCenterSeparator("|")
 
-	renderTable(r, t)
+	renderTable(report, t)
 	return nil
 }

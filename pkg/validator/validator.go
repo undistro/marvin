@@ -23,11 +23,11 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/version"
 
-	"github.com/undistro/marvin/pkg/checks"
+	types2 "github.com/undistro/marvin/pkg/types"
 )
 
 type CELValidator struct {
-	check       checks.Check
+	check       types2.Check
 	programs    []cel.Program
 	hasPodSpec  bool
 	apiVersions []string

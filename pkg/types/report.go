@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package report
+package types
 
 import (
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/version"
-
-	"github.com/undistro/marvin/pkg/checks"
 )
 
 type Report struct {
@@ -28,7 +26,7 @@ type Report struct {
 	Checks      []*CheckResult `json:"checks"`
 }
 
-func New(kubeVersion *version.Info) *Report {
+func NewReport(kubeVersion *version.Info) *Report {
 	return &Report{KubeVersion: kubeVersion}
 }
 
@@ -37,11 +35,11 @@ func (r *Report) Add(cr *CheckResult) {
 }
 
 type CheckResult struct {
-	ID       string          `json:"id"`
-	Message  string          `json:"message"`
-	Severity checks.Severity `json:"severity"`
-	Builtin  bool            `json:"builtin"`
-	Path     string          `json:"path"`
+	ID       string   `json:"id"`
+	Message  string   `json:"message"`
+	Severity Severity `json:"severity"`
+	Builtin  bool     `json:"builtin"`
+	Path     string   `json:"path"`
 
 	Status  CheckStatus         `json:"status"`
 	Failed  map[string][]string `json:"failed"`
@@ -54,7 +52,7 @@ type CheckResult struct {
 	TotalSkipped int `json:"totalSkipped"`
 }
 
-func NewCheckResult(c checks.Check) *CheckResult {
+func NewCheckResult(c Check) *CheckResult {
 	return &CheckResult{
 		ID:       c.ID,
 		Message:  c.Message,

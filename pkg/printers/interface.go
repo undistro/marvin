@@ -17,9 +17,9 @@ package printers
 import (
 	"io"
 
-	"github.com/undistro/marvin/pkg/report"
+	"github.com/undistro/marvin/pkg/types"
 )
 
 type Printer interface {
-	PrintObj(report.Report, io.Writer) error
+	PrintObj(types.Report, io.Writer) error
 }

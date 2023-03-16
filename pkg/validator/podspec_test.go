@@ -22,18 +22,18 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/undistro/marvin/pkg/checks"
+	"github.com/undistro/marvin/pkg/types"
 )
 
 func TestMatchesPodSpec(t *testing.T) {
 	tests := []struct {
 		name  string
-		rules []checks.ResourceRule
+		rules []types.ResourceRule
 		want  bool
 	}{
 		{
 			name: "deployments",
-			rules: []checks.ResourceRule{{
+			rules: []types.ResourceRule{{
 				Group:    "apps",
 				Version:  "v1",
 				Resource: "deployments",
@@ -42,7 +42,7 @@ func TestMatchesPodSpec(t *testing.T) {
 		},
 		{
 			name: "pods and services",
-			rules: []checks.ResourceRule{
+			rules: []types.ResourceRule{
 				{
 					Group:    "",
 					Version:  "v1",
@@ -58,7 +58,7 @@ func TestMatchesPodSpec(t *testing.T) {
 		},
 		{
 			name: "services and cronjobs",
-			rules: []checks.ResourceRule{
+			rules: []types.ResourceRule{
 				{
 					Group:    "",
 					Version:  "v1",
@@ -74,7 +74,7 @@ func TestMatchesPodSpec(t *testing.T) {
 		},
 		{
 			name: "services",
-			rules: []checks.ResourceRule{{
+			rules: []types.ResourceRule{{
 				Group:    "",
 				Version:  "v1",
 				Resource: "services",
@@ -83,7 +83,7 @@ func TestMatchesPodSpec(t *testing.T) {
 		},
 		{
 			name:  "empty",
-			rules: []checks.ResourceRule{},
+			rules: []types.ResourceRule{},
 			want:  false,
 		},
 		{
