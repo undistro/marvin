@@ -31,12 +31,12 @@ test: fmt vet ## Run tests.
 	go test ./... -coverprofile cover.out
 
 .PHONY: addlicense
-addlicense: ## Add copyright license headers in source code files
+addlicense: ## Add copyright license headers in source code files.
 	@test -s $(LOCALBIN)/addlicense || GOBIN=$(LOCALBIN) go install github.com/google/addlicense@latest
 	$(LOCALBIN)/addlicense -c "Undistro Authors" -l "apache" -ignore ".github/**" -ignore ".idea/**" -ignore "dist/**" -ignore ".goreleaser.yaml" .
 
 .PHONY: checklicense
-checklicense: ## Check copyright license headers in source code files
+checklicense: ## Check copyright license headers in source code files.
 	@test -s $(LOCALBIN)/addlicense || GOBIN=$(LOCALBIN) go install github.com/google/addlicense@latest
 	$(LOCALBIN)/addlicense -c "Undistro Authors" -l "apache" -ignore ".github/**" -ignore ".idea/**" -ignore "dist/**" -ignore ".goreleaser.yaml" -check .
 
