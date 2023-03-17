@@ -53,6 +53,7 @@ type ScanOptions struct {
 	client       *dynamic.DynamicClient
 	kubeVersion  *version.Info
 	apiResources []*metav1.APIResourceList
+	resources    map[string][]unstructured.Unstructured
 }
 
 func NewScanOptions() *ScanOptions {
@@ -147,6 +148,7 @@ func (o *ScanOptions) Init() error {
 	o.kubeVersion = kubeVersion
 	o.apiResources = apiResources
 	o.printer = printer
+	o.resources = make(map[string][]unstructured.Unstructured)
 	return nil
 }
 
@@ -155,32 +157,17 @@ func (o *ScanOptions) Run() error {
 	if err != nil {
 		return err
 	}
-	rep := types.NewReport(o.kubeVersion)
-	cache := make(map[string][]unstructured.Unstructured)
+	report := types.NewReport(o.kubeVersion)
 	for _, check := range allChecks {
 		cr := types.NewCheckResult(check)
-		rep.Add(cr)
+		report.Add(cr)
 		v, err := validator.Compile(check, o.apiResources, o.kubeVersion)
 		if err != nil {
 			cr.AddError(fmt.Errorf("compile error: %s", err.Error()))
 			continue
 		}
-		var resources []unstructured.Unstructured
-		for _, r := range check.Match.Resources {
-			gvr := r.ToGVR()
-			objs, cached := cache[gvr.String()]
-			if cached {
-				resources = append(resources, objs...)
-			} else {
-				ul, err := o.client.Resource(gvr).Namespace(*o.Namespace).List(context.Background(), metav1.ListOptions{})
-				if err != nil {
-					cr.AddError(fmt.Errorf("list %s error: %s", gvr.Resource, err.Error()))
-					continue
-				}
-				cache[gvr.String()] = ul.Items
-				resources = append(resources, ul.Items...)
-			}
-		}
+		resources, errs := o.loadResources(check)
+		cr.AddErrors(errs...)
 		for _, obj := range resources {
 			if o.IsSkipped(check.ID, obj.GetAnnotations()) {
 				cr.AddSkipped(obj)
@@ -200,7 +187,29 @@ func (o *ScanOptions) Run() error {
 		cr.UpdateStatus()
 	}
 
-	return o.printer.PrintObj(*rep, o.Out)
+	return o.printer.PrintObj(*report, o.Out)
+}
+
+// loadResources returns the resources to be validated by the given check
+func (o *ScanOptions) loadResources(check types.Check) ([]unstructured.Unstructured, []error) {
+	var resources []unstructured.Unstructured
+	var errs []error
+	for _, r := range check.Match.Resources {
+		gvr := r.ToGVR()
+		objs, cached := o.resources[gvr.String()]
+		if cached {
+			resources = append(resources, objs...)
+		} else {
+			ul, err := o.client.Resource(gvr).Namespace(*o.Namespace).List(context.Background(), metav1.ListOptions{})
+			if err != nil {
+				errs = append(errs, fmt.Errorf("list %s error: %s", gvr.Resource, err.Error()))
+				continue
+			}
+			o.resources[gvr.String()] = ul.Items
+			resources = append(resources, ul.Items...)
+		}
+	}
+	return resources, errs
 }
 
 // getChecks returns a list of checks.Check based on the flags, including built-in checks or/and from a path.
