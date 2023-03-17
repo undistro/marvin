@@ -52,13 +52,13 @@ type CheckResult struct {
 	TotalSkipped int `json:"totalSkipped"`
 }
 
-func NewCheckResult(c Check) *CheckResult {
+func NewCheckResult(check Check) *CheckResult {
 	return &CheckResult{
-		ID:       c.ID,
-		Message:  c.Message,
-		Severity: c.Severity,
-		Builtin:  c.Builtin,
-		Path:     c.Path,
+		ID:       check.ID,
+		Message:  check.Message,
+		Severity: check.Severity,
+		Builtin:  check.Builtin,
+		Path:     check.Path,
 
 		Failed:  map[string][]string{},
 		Passed:  map[string][]string{},
@@ -84,6 +84,12 @@ func (r *CheckResult) AddSkipped(obj unstructured.Unstructured) {
 
 func (r *CheckResult) AddError(err error) {
 	r.Errors = append(r.Errors, err.Error())
+}
+
+func (r *CheckResult) AddErrors(errs ...error) {
+	for _, err := range errs {
+		r.AddError(err)
+	}
 }
 
 func (r *CheckResult) UpdateStatus() {
