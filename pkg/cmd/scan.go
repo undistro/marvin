@@ -168,20 +168,23 @@ func (o *ScanOptions) Run() error {
 		}
 		resources, errs := o.loadResources(check)
 		cr.AddErrors(errs...)
-		for _, obj := range resources {
-			if o.IsSkipped(check.ID, obj.GetAnnotations()) {
-				cr.AddSkipped(obj)
-				continue
-			}
-			passed, _, err := v.Validate(obj, check.Params)
-			if err != nil {
-				cr.AddError(fmt.Errorf("%s validate error: %s", check.Path, err.Error()))
-				continue
-			}
-			if passed {
-				cr.AddPassed(obj)
-			} else {
-				cr.AddFailed(obj)
+		for gvr, objs := range resources {
+			for _, obj := range objs {
+				report.AddGVR(obj, gvr)
+				if o.IsSkipped(check.ID, obj.GetAnnotations()) {
+					cr.AddSkipped(obj)
+					continue
+				}
+				passed, _, err := v.Validate(obj, check.Params)
+				if err != nil {
+					cr.AddError(fmt.Errorf("%s validate error: %s", check.Path, err.Error()))
+					continue
+				}
+				if passed {
+					cr.AddPassed(obj)
+				} else {
+					cr.AddFailed(obj)
+				}
 			}
 		}
 		cr.UpdateStatus()
@@ -190,23 +193,24 @@ func (o *ScanOptions) Run() error {
 	return o.printer.PrintObj(*report, o.Out)
 }
 
-// loadResources returns the resources to be validated by the given check
-func (o *ScanOptions) loadResources(check types.Check) ([]unstructured.Unstructured, []error) {
-	var resources []unstructured.Unstructured
+// loadResources returns a map of resource slice by GVR to be validated by the given check
+func (o *ScanOptions) loadResources(check types.Check) (map[string][]unstructured.Unstructured, []error) {
+	resources := map[string][]unstructured.Unstructured{}
 	var errs []error
 	for _, r := range check.Match.Resources {
 		gvr := r.ToGVR()
-		objs, cached := o.resources[gvr.String()]
+		gvrs := fmt.Sprintf("%s/%s", gvr.GroupVersion().String(), gvr.Resource)
+		objs, cached := o.resources[gvrs]
 		if cached {
-			resources = append(resources, objs...)
+			resources[gvrs] = objs
 		} else {
 			ul, err := o.client.Resource(gvr).Namespace(*o.Namespace).List(context.Background(), metav1.ListOptions{})
 			if err != nil {
 				errs = append(errs, fmt.Errorf("list %s error: %s", gvr.Resource, err.Error()))
 				continue
 			}
-			o.resources[gvr.String()] = ul.Items
-			resources = append(resources, ul.Items...)
+			o.resources[gvrs] = ul.Items
+			resources[gvrs] = ul.Items
 		}
 	}
 	return resources, errs

@@ -22,8 +22,9 @@ import (
 )
 
 type Report struct {
-	KubeVersion *version.Info  `json:"kubeVersion"`
-	Checks      []*CheckResult `json:"checks"`
+	KubeVersion *version.Info     `json:"kubeVersion"`
+	Checks      []*CheckResult    `json:"checks"`
+	GVRs        map[string]string `json:"gvrs"`
 }
 
 func NewReport(kubeVersion *version.Info) *Report {
@@ -32,6 +33,16 @@ func NewReport(kubeVersion *version.Info) *Report {
 
 func (r *Report) Add(cr *CheckResult) {
 	r.Checks = append(r.Checks, cr)
+}
+
+func (r *Report) AddGVR(obj unstructured.Unstructured, gvr string) {
+	if r.GVRs == nil {
+		r.GVRs = map[string]string{}
+	}
+	gvk := GVK(obj)
+	if _, ok := r.GVRs[gvk]; !ok {
+		r.GVRs[gvk] = gvr
+	}
 }
 
 type CheckResult struct {
@@ -109,12 +120,14 @@ func (r *CheckResult) UpdateStatus() {
 	return
 }
 
-func key(obj unstructured.Unstructured) string {
+// GVK returns the GroupVersionKind string of the given resource
+func GVK(obj unstructured.Unstructured) string {
 	gvk := obj.GroupVersionKind()
 	return fmt.Sprintf("%s/%s", gvk.GroupVersion().String(), gvk.Kind)
 }
 
-func value(obj unstructured.Unstructured) string {
+// NamespacedName returns the namespaced name string of the given resource
+func NamespacedName(obj unstructured.Unstructured) string {
 	if len(obj.GetNamespace()) > 0 {
 		return fmt.Sprintf("%s/%s", obj.GetNamespace(), obj.GetName())
 	}
@@ -122,8 +135,8 @@ func value(obj unstructured.Unstructured) string {
 }
 
 func addResource(obj unstructured.Unstructured, m map[string][]string) {
-	k := key(obj)
-	v := value(obj)
+	k := GVK(obj)
+	v := NamespacedName(obj)
 	if _, ok := m[k]; ok {
 		m[k] = append(m[k], v)
 	} else {
