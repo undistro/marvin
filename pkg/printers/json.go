@@ -24,7 +24,7 @@ import (
 type JSONPrinter struct{}
 
 func (*JSONPrinter) PrintObj(report types.Report, w io.Writer) error {
-	data, err := json.MarshalIndent(report, "", "    ")
+	data, err := json.Marshal(report)
 	if err != nil {
 		return err
 	}
