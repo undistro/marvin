@@ -20,6 +20,9 @@ severity: Low
 message: "Not allowed volume type"
 match:
   resources:
+    - group: ""
+      version: v1
+      resource: pods
     - group: apps
       version: v1
       resource: deployments
