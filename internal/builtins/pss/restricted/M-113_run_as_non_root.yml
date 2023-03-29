@@ -15,7 +15,8 @@
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsNonRoot.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsNonRoot_test.go
-id: run-as-non-root
+id: M-113
+slug: run-as-non-root
 severity: Medium
 message: "Container could be running as root user"
 match:

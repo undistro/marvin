@@ -15,7 +15,8 @@
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seLinuxOptions.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seLinuxOptions_test.go
-id: selinux
+id: M-107
+slug: selinux
 severity: Medium
 message: "Forbidden SELinux options"
 match:

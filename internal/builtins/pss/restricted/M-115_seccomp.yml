@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_baseline.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_baseline_test.go
-id: seccomp-baseline
-severity: Medium
-message: "Forbidden seccomp profile"
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_restricted.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_seccompProfile_restricted_test.go
+id: M-115
+slug: seccomp-restricted
+severity: Low
+message: "Not allowed seccomp profile"
 match:
   resources:
     - group: ""
@@ -42,17 +43,33 @@ match:
       version: v1
       resource: jobs
 validations:
+  # Pod or Containers must set `securityContext.seccompProfile.type`
   - expression: >
-      !has(podSpec.securityContext) || 
-      !has(podSpec.securityContext.seccompProfile) || 
-      !has(podSpec.securityContext.seccompProfile.type) || 
-      podSpec.securityContext.seccompProfile.type != 'Unconfined'
-    message: "Pod using forbidden seccomp profile"
+      (
+        has(podSpec.securityContext) && 
+        has(podSpec.securityContext.seccompProfile) &&
+        has(podSpec.securityContext.seccompProfile.type)
+      ) ||
+      allContainers.all(container,
+        has(container.securityContext) && 
+        has(container.securityContext.seccompProfile) &&
+        has(container.securityContext.seccompProfile.type)
+      )
+    message: "Seccomp profile not set"
+
+  # Neither Pod nor Containers should set `securityContext.seccompProfile.type` to Unconfined
   - expression: >
+      (
+        !has(podSpec.securityContext) || 
+        !has(podSpec.securityContext.seccompProfile) || 
+        !has(podSpec.securityContext.seccompProfile.type) || 
+        podSpec.securityContext.seccompProfile.type != 'Unconfined'
+      )
+      &&
       allContainers.all(container,
         !has(container.securityContext) || 
         !has(container.securityContext.seccompProfile) || 
         !has(container.securityContext.seccompProfile.type) || 
         container.securityContext.seccompProfile.type != 'Unconfined'
       )
-    message: "Container using forbidden seccomp profile"
+    message: "Forbidden seccomp profile"

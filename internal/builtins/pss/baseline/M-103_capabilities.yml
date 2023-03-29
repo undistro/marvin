@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_windowsHostProcess.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_windowsHostProcess_test.go
-id: host-process
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline_test.go
+id: M-103
+slug: capabilities-added
 severity: High
-message: "Privileged access to the Windows node"
+message: "Insecure capabilities"
 match:
   resources:
     - group: ""
@@ -41,17 +42,27 @@ match:
     - group: batch
       version: v1
       resource: jobs
+params:
+  allowedCapabilities:
+    - AUDIT_WRITE
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - FSETID
+    - KILL
+    - MKNOD
+    - NET_BIND_SERVICE
+    - SETFCAP
+    - SETGID
+    - SETPCAP
+    - SETUID
+    - SYS_CHROOT
 validations:
-  - expression: >
-      !has(podSpec.securityContext) || 
-      !has(podSpec.securityContext.windowsOptions) || 
-      !has(podSpec.securityContext.windowsOptions.hostProcess) || 
-      podSpec.securityContext.windowsOptions.hostProcess == false
-    message: "Pod with privileged access to the Windows node"
   - expression: >
       allContainers.all(container,
         !has(container.securityContext) ||
-        !has(container.securityContext.windowsOptions) ||
-        !has(container.securityContext.windowsOptions.hostProcess) ||
-        container.securityContext.windowsOptions.hostProcess == false)
-    message: "Container with privileged access to the Windows node"
+        !has(container.securityContext.capabilities) ||
+        !has(container.securityContext.capabilities.add) ||
+        container.securityContext.capabilities.add.all(cap, cap in params.allowedCapabilities)
+      )
+    message: "Container running with not allowed capabilities"

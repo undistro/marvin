@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: auto-mount-sa-token
-severity: Low
-message: "Automounted service account token"
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_sysctls.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_sysctls_test.go
+id: M-110
+slug: sysctls
+severity: Medium
+message: "Unsafe sysctls"
 match:
   resources:
     - group: ""
@@ -38,7 +42,19 @@ match:
     - group: batch
       version: v1
       resource: jobs
+params:
+  allowedSysctls:
+    - kernel.shm_rmid_forced
+    - net.ipv4.ip_local_port_range
+    - net.ipv4.ip_unprivileged_port_start
+    - net.ipv4.tcp_syncookies
+    - net.ipv4.ping_group_range
 validations:
   - expression: >
-      has(podSpec.automountServiceAccountToken) && podSpec.automountServiceAccountToken == false
-    message: "Pod with Service Account token mounted automatically"
+      !has(podSpec.securityContext) ||
+      !has(podSpec.securityContext.sysctls) ||
+      podSpec.securityContext.sysctls.all(s,
+        s.name == null ||
+        s.name in params.allowedSysctls
+      )
+    message: "Pod using unsafe sysctls"

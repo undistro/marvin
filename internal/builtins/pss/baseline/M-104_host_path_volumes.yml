@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: ssh-server
-severity: Low
-message: "SSH server running inside container"
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes_test.go
+id: M-104
+slug: host-path-volumes
+severity: High
+message: "HostPath volume"
 match:
   resources:
     - group: ""
@@ -38,26 +42,7 @@ match:
     - group: batch
       version: v1
       resource: jobs
-    - group: ""
-      version: v1
-      resource: services
-params:
-  sshPorts: [22, 2222]
 validations:
   - expression: >
-      object.kind != 'Service' ||
-      !has(object.spec.ports) ||
-      object.spec.ports.all(p,
-        !(p.port in params.sshPorts) &&
-        (!has(p.targetPort) || !(p.targetPort in params.sshPorts))
-      )
-    message: "Service could be routing to SSH server"
-
-  - expression: >
-      allContainers.all(container,
-        !has(container.ports) ||
-        container.ports.all(port,
-          !(port.containerPort in params.sshPorts)
-        )
-      )
-    message: "Container could be running SSH server"
+      !has(podSpec.volumes) || podSpec.volumes.all(vol, !has(vol.hostPath))
+    message: "Pod with mounted host volume"

@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_allowPrivilegeEscalation.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_allowPrivilegeEscalation_test.go
-id: privilege-escalation
-severity: Medium
-message: "Allowed privilege escalation"
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_restricted.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_restricted_test.go
+id: M-116
+slug: capabilities
+severity: Low
+message: "Not allowed added/dropped capabilities"
 match:
   resources:
     - group: ""
@@ -41,11 +42,24 @@ match:
     - group: batch
       version: v1
       resource: jobs
+params:
+  allowedCapabilities:
+    - NET_BIND_SERVICE
 validations:
   - expression: >
       allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.allowPrivilegeEscalation) ||
-        container.securityContext.allowPrivilegeEscalation == false
+        has(container.securityContext) &&
+        has(container.securityContext.capabilities) &&
+        has(container.securityContext.capabilities.drop) &&
+        size(container.securityContext.capabilities.drop) >= 1 &&
+        container.securityContext.capabilities.drop.exists(c, c == 'ALL')
       )
-    message: "Container with allowed privilege escalation"
+    message: "Containers must drop ALL capabilities"
+  - expression: >
+      allContainers.all(container,
+        !has(container.securityContext) ||
+        !has(container.securityContext.capabilities) ||
+        !has(container.securityContext.capabilities.add) ||
+        container.securityContext.capabilities.add.all(cap, cap in params.allowedCapabilities)
+      )
+    message: "Container running with not allowed capabilities"

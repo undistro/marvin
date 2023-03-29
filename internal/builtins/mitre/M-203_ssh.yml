@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces_test.go
-id: host-namespaces
-severity: High
-message: "Host namespaces"
+id: M-203
+slug: ssh-server
+severity: Low
+message: "SSH server running inside container"
 match:
   resources:
     - group: ""
@@ -41,9 +39,26 @@ match:
     - group: batch
       version: v1
       resource: jobs
+    - group: ""
+      version: v1
+      resource: services
+params:
+  sshPorts: [22, 2222]
 validations:
   - expression: >
-      (!has(podSpec.hostNetwork) || podSpec.hostNetwork == false) &&
-      (!has(podSpec.hostPID) || podSpec.hostPID == false) &&
-      (!has(podSpec.hostIPC) || podSpec.hostIPC == false)
-    message: "Pod sharing host namespace"
+      object.kind != 'Service' ||
+      !has(object.spec.ports) ||
+      object.spec.ports.all(p,
+        !(p.port in params.sshPorts) &&
+        (!has(p.targetPort) || !(p.targetPort in params.sshPorts))
+      )
+    message: "Service could be routing to SSH server"
+
+  - expression: >
+      allContainers.all(container,
+        !has(container.ports) ||
+        container.ports.all(port,
+          !(port.containerPort in params.sshPorts)
+        )
+      )
+    message: "Container could be running SSH server"

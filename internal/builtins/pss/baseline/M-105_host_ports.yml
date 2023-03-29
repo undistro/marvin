@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_procMount.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_procMount_test.go
-id: proc-mount
-severity: Medium
-message: "Forbidden proc mount type"
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts_test.go
+id: M-105
+slug: host-ports
+severity: High
+message: "Not allowed hostPort"
 match:
   resources:
     - group: ""
@@ -41,11 +42,16 @@ match:
     - group: batch
       version: v1
       resource: jobs
+params:
+  allowedHostPorts: []
 validations:
   - expression: >
       allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.procMount) ||
-        container.securityContext.procMount == 'Default'
+        !has(container.ports) ||
+        container.ports.all(port,
+          !has(port.hostPort) ||
+          port.hostPort == 0 ||
+          port.hostPort in params.allowedHostPorts
+        )
       )
-    message: "Container using forbidden proc mount type"
+    message: "Container exposing not allowed port on the host"

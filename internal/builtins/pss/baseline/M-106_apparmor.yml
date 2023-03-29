@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_sysctls.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_sysctls_test.go
-id: sysctls
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile_test.go
+id: M-106
+slug: apparmor
 severity: Medium
-message: "Unsafe sysctls"
+message: "Forbidden AppArmor profile"
 match:
   resources:
     - group: ""
@@ -41,19 +42,16 @@ match:
     - group: batch
       version: v1
       resource: jobs
-params:
-  allowedSysctls:
-    - kernel.shm_rmid_forced
-    - net.ipv4.ip_local_port_range
-    - net.ipv4.ip_unprivileged_port_start
-    - net.ipv4.tcp_syncookies
-    - net.ipv4.ping_group_range
 validations:
   - expression: >
-      !has(podSpec.securityContext) ||
-      !has(podSpec.securityContext.sysctls) ||
-      podSpec.securityContext.sysctls.all(s,
-        s.name == null ||
-        s.name in params.allowedSysctls
+      !has(podMeta.annotations) ||
+      !podMeta.annotations.exists(key,
+        key.startsWith('container.apparmor.security.beta.kubernetes.io')
+      ) ||
+      podMeta.annotations.filter(key,
+        key.startsWith('container.apparmor.security.beta.kubernetes.io')
+      ).all(key,
+        podMeta.annotations[key] == 'runtime/default' ||
+        podMeta.annotations[key].startsWith('localhost/')
       )
-    message: "Pod using unsafe sysctls"
+    message: "Container running with forbidden AppArmor profile"

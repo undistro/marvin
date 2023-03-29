@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_appArmorProfile_test.go
-id: apparmor
+id: M-200
+slug: image-registry
 severity: Medium
-message: "Forbidden AppArmor profile"
+message: "Image registry not allowed"
 match:
   resources:
     - group: ""
@@ -41,16 +39,16 @@ match:
     - group: batch
       version: v1
       resource: jobs
+params:
+  # use 'docker.io' for Docker Hub
+  allowedRegistries: []
 validations:
   - expression: >
-      !has(podMeta.annotations) ||
-      !podMeta.annotations.exists(key,
-        key.startsWith('container.apparmor.security.beta.kubernetes.io')
-      ) ||
-      podMeta.annotations.filter(key,
-        key.startsWith('container.apparmor.security.beta.kubernetes.io')
-      ).all(key,
-        podMeta.annotations[key] == 'runtime/default' ||
-        podMeta.annotations[key].startsWith('localhost/')
+      size(params.allowedRegistries) == 0 ||
+      allContainers.all(container,
+        params.allowedRegistries.exists(registry,
+          ((registry in ['docker.io', 'docker.io/library']) && !container.image.contains('/')) ||
+          container.image.startsWith(registry)
+        )
       )
-    message: "Container running with forbidden AppArmor profile"
+    message: "Container image registry not allowed"

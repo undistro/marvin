@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes_test.go
-id: host-path-volumes
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged_test.go
+id: M-102
+slug: privileged-containers
 severity: High
-message: "HostPath volume"
+message: "Privileged container"
 match:
   resources:
     - group: ""
@@ -43,5 +44,8 @@ match:
       resource: jobs
 validations:
   - expression: >
-      !has(podSpec.volumes) || podSpec.volumes.all(vol, !has(vol.hostPath))
-    message: "Pod with mounted host volume"
+      allContainers.all(container,
+        !has(container.securityContext) ||
+        !has(container.securityContext.privileged) ||
+        container.securityContext.privileged == false)
+    message: "Container running in privileged mode"

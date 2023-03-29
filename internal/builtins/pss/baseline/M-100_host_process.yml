@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPorts_test.go
-id: host-ports
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_windowsHostProcess.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_windowsHostProcess_test.go
+id: M-100
+slug: host-process
 severity: High
-message: "Not allowed hostPort"
+message: "Privileged access to the Windows node"
 match:
   resources:
     - group: ""
@@ -41,16 +42,17 @@ match:
     - group: batch
       version: v1
       resource: jobs
-params:
-  allowedHostPorts: []
 validations:
   - expression: >
+      !has(podSpec.securityContext) || 
+      !has(podSpec.securityContext.windowsOptions) || 
+      !has(podSpec.securityContext.windowsOptions.hostProcess) || 
+      podSpec.securityContext.windowsOptions.hostProcess == false
+    message: "Pod with privileged access to the Windows node"
+  - expression: >
       allContainers.all(container,
-        !has(container.ports) ||
-        container.ports.all(port,
-          !has(port.hostPort) ||
-          port.hostPort == 0 ||
-          port.hostPort in params.allowedHostPorts
-        )
-      )
-    message: "Container exposing not allowed port on the host"
+        !has(container.securityContext) ||
+        !has(container.securityContext.windowsOptions) ||
+        !has(container.securityContext.windowsOptions.hostProcess) ||
+        container.securityContext.windowsOptions.hostProcess == false)
+    message: "Container with privileged access to the Windows node"

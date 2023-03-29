@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser_test.go
-id: run-as-user
+id: M-300
+slug: read-only-root-fs
 severity: Low
-message: "Container running as root UID"
+message: "Root filesystem write allowed"
 match:
   resources:
     - group: ""
@@ -43,9 +41,9 @@ match:
       resource: jobs
 validations:
   - expression: >
-      (!has(podSpec.securityContext) || !has(podSpec.securityContext.runAsUser) || podSpec.securityContext.runAsUser != 0)
-      &&
       allContainers.all(container,
-        !has(container.securityContext) || !has(container.securityContext.runAsUser) || container.securityContext.runAsUser != 0
+        has(container.securityContext) &&
+        has(container.securityContext.readOnlyRootFilesystem) &&
+        container.securityContext.readOnlyRootFilesystem == true
       )
-    message: "Container running as root UID"
+    message: "Container is able to write to the root filesystem"

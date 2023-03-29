@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: image-registry
-severity: Medium
-message: "Image registry not allowed"
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_runAsUser_test.go
+id: M-114
+slug: run-as-user
+severity: Low
+message: "Container running as root UID"
 match:
   resources:
     - group: ""
@@ -38,16 +42,11 @@ match:
     - group: batch
       version: v1
       resource: jobs
-params:
-  # use 'docker.io' for Docker Hub
-  allowedRegistries: []
 validations:
   - expression: >
-      size(params.allowedRegistries) == 0 ||
+      (!has(podSpec.securityContext) || !has(podSpec.securityContext.runAsUser) || podSpec.securityContext.runAsUser != 0)
+      &&
       allContainers.all(container,
-        params.allowedRegistries.exists(registry,
-          ((registry in ['docker.io', 'docker.io/library']) && !container.image.contains('/')) ||
-          container.image.startsWith(registry)
-        )
+        !has(container.securityContext) || !has(container.securityContext.runAsUser) || container.securityContext.runAsUser != 0
       )
-    message: "Container image registry not allowed"
+    message: "Container running as root UID"

@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: read-only-root-fs
-severity: Low
-message: "Root filesystem write allowed"
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostNamespaces_test.go
+id: M-101
+slug: host-namespaces
+severity: High
+message: "Host namespaces"
 match:
   resources:
     - group: ""
@@ -40,9 +44,7 @@ match:
       resource: jobs
 validations:
   - expression: >
-      allContainers.all(container,
-        has(container.securityContext) &&
-        has(container.securityContext.readOnlyRootFilesystem) &&
-        container.securityContext.readOnlyRootFilesystem == true
-      )
-    message: "Container is able to write to the root filesystem"
+      (!has(podSpec.hostNetwork) || podSpec.hostNetwork == false) &&
+      (!has(podSpec.hostPID) || podSpec.hostPID == false) &&
+      (!has(podSpec.hostIPC) || podSpec.hostIPC == false)
+    message: "Pod sharing host namespace"

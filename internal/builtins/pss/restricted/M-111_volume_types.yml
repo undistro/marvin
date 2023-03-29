@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_restricted.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_restricted_test.go
-id: capabilities
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_restrictedVolumes.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_hostPathVolumes_test.go
+id: M-111
+slug: volume-types
 severity: Low
-message: "Not allowed added/dropped capabilities"
+message: "Not allowed volume type"
 match:
   resources:
     - group: ""
@@ -42,23 +43,19 @@ match:
       version: v1
       resource: jobs
 params:
-  allowedCapabilities:
-    - NET_BIND_SERVICE
+  allowedVolumeTypes:
+    - configMap
+    - csi
+    - downwardAPI
+    - emptyDir
+    - ephemeral
+    - persistentVolumeClaim
+    - projected
+    - secret
 validations:
   - expression: >
-      allContainers.all(container,
-        has(container.securityContext) &&
-        has(container.securityContext.capabilities) &&
-        has(container.securityContext.capabilities.drop) &&
-        size(container.securityContext.capabilities.drop) >= 1 &&
-        container.securityContext.capabilities.drop.exists(c, c == 'ALL')
+      !has(podSpec.volumes) ||
+      podSpec.volumes.all(volume,
+        volume.exists(key, key in params.allowedVolumeTypes)
       )
-    message: "Containers must drop ALL capabilities"
-  - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.capabilities) ||
-        !has(container.securityContext.capabilities.add) ||
-        container.securityContext.capabilities.add.all(cap, cap in params.allowedCapabilities)
-      )
-    message: "Container running with not allowed capabilities"
+    message: "Not allowed volume type used"

@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged.go
-# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_privileged_test.go
-id: privileged-containers
-severity: High
-message: "Privileged container"
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_allowPrivilegeEscalation.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_allowPrivilegeEscalation_test.go
+id: M-112
+slug: privilege-escalation
+severity: Medium
+message: "Allowed privilege escalation"
 match:
   resources:
     - group: ""
@@ -45,6 +46,7 @@ validations:
   - expression: >
       allContainers.all(container,
         !has(container.securityContext) ||
-        !has(container.securityContext.privileged) ||
-        container.securityContext.privileged == false)
-    message: "Container running in privileged mode"
+        !has(container.securityContext.allowPrivilegeEscalation) ||
+        container.securityContext.allowPrivilegeEscalation == false
+      )
+    message: "Container with allowed privilege escalation"
