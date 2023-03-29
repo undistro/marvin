@@ -1,5 +1,5 @@
 {
-  "id": "svclb",
+  "id": "TEST-002",
   "message": "Type Loadbalancer detected. Could be expensive",
   "severity": "Low",
   "match": {
