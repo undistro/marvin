@@ -143,7 +143,7 @@ you can specify a comma-separated list of check IDs to skip.
 
 Example:
 ```shell
-kubectl annotate deployment nginx marvin.undistro.io/skip='auto-mount-sa-token, volume-types'
+kubectl annotate deployment nginx marvin.undistro.io/skip='M-202, M-111'
 ```
 
 By default, Marvin will respect the `marvin.undistro.io/skip` annotation when performing checks. 
