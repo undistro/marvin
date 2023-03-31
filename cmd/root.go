@@ -15,10 +15,18 @@
 package cmd
 
 import (
+	"context"
+	"flag"
 	"os"
 
+	"github.com/fatih/color"
+	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
+	"k8s.io/klog/v2"
+	"k8s.io/klog/v2/klogr"
 )
+
+var noColor bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -31,4 +39,22 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func init() {
+	cobra.OnInitialize(initNoColor)
+
+	rootCmd.PersistentFlags().BoolVar(&noColor, "no-color", false, "Disable color output")
+	var allFlags flag.FlagSet
+	klog.InitFlags(&allFlags)
+	allFlags.VisitAll(func(f *flag.Flag) {
+		if f.Name == "v" {
+			rootCmd.PersistentFlags().AddGoFlag(f)
+		}
+	})
+	rootCmd.SetContext(logr.NewContext(context.Background(), klogr.New()))
+}
+
+func initNoColor() {
+	color.NoColor = noColor
 }

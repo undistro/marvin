@@ -1,5 +1,6 @@
 # Marvin
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/undistro/marvin.svg)](https://pkg.go.dev/github.com/undistro/marvin)
 [![Test](https://github.com/undistro/marvin/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/undistro/marvin/actions/workflows/test.yml)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/undistro/marvin?sort=semver)
 ![GitHub](https://img.shields.io/github/license/undistro/marvin)

@@ -18,6 +18,7 @@ import (
 	"io"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
@@ -101,7 +102,7 @@ func colorStatus(s types.CheckStatus) string {
 	case types.StatusFailed:
 		return red("%s", s)
 	case types.StatusError:
-		return redBold("%s", s)
+		return redBold("%s", strings.ToUpper(s.String()))
 	default:
 		return s.String()
 	}

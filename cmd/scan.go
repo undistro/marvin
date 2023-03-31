@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 
 	"github.com/undistro/marvin/pkg/cmd"
@@ -27,15 +29,16 @@ var (
 	scanCmd = &cobra.Command{
 		Use:   "scan [flags]",
 		Short: "Scan a Kubernetes cluster",
-		PreRunE: func(c *cobra.Command, args []string) error {
-			return scanOptions.Validate()
-		},
 		RunE: func(c *cobra.Command, args []string) error {
-			if err := scanOptions.Init(); err != nil {
+			if err := scanOptions.Init(c.Context()); err != nil {
 				return err
 			}
-			if err := scanOptions.Run(); err != nil {
+			hasError, err := scanOptions.Run()
+			if err != nil {
 				return err
+			}
+			if hasError && !*scanOptions.NoFail {
+				os.Exit(2)
 			}
 			return nil
 		},
