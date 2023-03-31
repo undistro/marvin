@@ -24,7 +24,7 @@ import (
 type Report struct {
 	KubeVersion *version.Info     `json:"kubeVersion"`
 	Checks      []*CheckResult    `json:"checks"`
-	GVRs        map[string]string `json:"gvrs"`
+	GVRs        map[string]string `json:"gvrs,omitempty"`
 }
 
 func NewReport(kubeVersion *version.Info) *Report {
@@ -35,14 +35,13 @@ func (r *Report) Add(cr *CheckResult) {
 	r.Checks = append(r.Checks, cr)
 }
 
-func (r *Report) AddGVR(obj unstructured.Unstructured, gvr string) {
-	if r.GVRs == nil {
-		r.GVRs = map[string]string{}
+func (r *Report) HasError() bool {
+	for _, check := range r.Checks {
+		if len(check.Errors) > 0 {
+			return true
+		}
 	}
-	gvk := GVK(obj)
-	if _, ok := r.GVRs[gvk]; !ok {
-		r.GVRs[gvk] = gvr
-	}
+	return false
 }
 
 type CheckResult struct {
