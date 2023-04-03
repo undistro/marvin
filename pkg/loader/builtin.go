@@ -22,6 +22,7 @@ import (
 	"github.com/undistro/marvin/pkg/types"
 )
 
+// Builtins represents the builtins checks
 var Builtins []types.Check
 
 func init() {

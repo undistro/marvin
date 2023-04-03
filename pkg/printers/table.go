@@ -34,6 +34,7 @@ var (
 	green   = color.New(color.FgGreen).SprintfFunc()
 )
 
+// TablePrinter implements a Printer that prints the report in table format
 type TablePrinter struct{}
 
 func (*TablePrinter) PrintObj(report types.Report, w io.Writer) error {

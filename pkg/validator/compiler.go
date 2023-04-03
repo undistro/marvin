@@ -26,6 +26,7 @@ import (
 	"github.com/undistro/marvin/pkg/types"
 )
 
+// Compile compiles the expressions of the given check and returns a Validator
 func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVersion *version.Info) (Validator, error) {
 	if len(check.Validations) == 0 {
 		return nil, errors.New("invalid check: a check must have at least 1 validation")

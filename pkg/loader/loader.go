@@ -33,6 +33,7 @@ type (
 	readFileFunc func(string) ([]byte, error)
 )
 
+// toList returns a slice of Check
 func (cm ChecksMap) toList() []types.Check {
 	if cm == nil {
 		return nil
@@ -44,17 +45,20 @@ func (cm ChecksMap) toList() []types.Check {
 	return list
 }
 
+// supportedExt supported file extensions for checks and tests
 var supportedExt = map[string]bool{
 	".yaml": true,
 	".yml":  true,
 	".json": true,
 }
 
+// LoadChecks loads all checks from given path recursively
 func LoadChecks(root string) ([]types.Check, error) {
 	c, _, err := load(root)
 	return c.toList(), err
 }
 
+// LoadChecksAndTests loads all checks and their tests from given path recursively
 func LoadChecksAndTests(root string) (ChecksMap, TestsMap, error) {
 	return load(root)
 }

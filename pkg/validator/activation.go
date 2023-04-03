@@ -28,6 +28,7 @@ const (
 	KubeVersionVarName   = "kubeVersion"
 )
 
+// activation implements the interpreter.Activation
 type activation struct {
 	object        map[string]any
 	podMeta       map[string]any

@@ -23,6 +23,7 @@ import (
 	"github.com/undistro/marvin/pkg/types"
 )
 
+// YAMLPrinter implements a Printer that prints the report in YAML format
 type YAMLPrinter struct{}
 
 func (*YAMLPrinter) PrintObj(report types.Report, w io.Writer) error {

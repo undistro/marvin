@@ -20,6 +20,7 @@ import (
 	"github.com/undistro/marvin/pkg/types"
 )
 
+// Printer is an interface that defines a method for printing a Report to an io.Writer
 type Printer interface {
 	PrintObj(types.Report, io.Writer) error
 }

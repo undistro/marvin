@@ -21,6 +21,7 @@ import (
 	"github.com/undistro/marvin/pkg/types"
 )
 
+// JSONPrinter implements a Printer that prints the report in JSON format
 type JSONPrinter struct{}
 
 func (*JSONPrinter) PrintObj(report types.Report, w io.Writer) error {

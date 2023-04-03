@@ -19,6 +19,7 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 )
 
+// Validator is an interface that defines a method for validating a k8s unustructured object
 type Validator interface {
 	Validate(obj unstructured.Unstructured, params any) (bool, string, error)
 	SetAPIVersions(apiVersions []string)

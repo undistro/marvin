@@ -28,6 +28,7 @@ import (
 	"github.com/undistro/marvin/pkg/types"
 )
 
+// MatchesPodSpec returns true if any rule matches a Pod spec
 func MatchesPodSpec(rules []types.ResourceRule) bool {
 	for _, r := range rules {
 		gr := r.ToGVR().GroupResource()
@@ -50,12 +51,14 @@ var defaultPodSpecResources = map[schema.GroupResource]bool{
 	batchv1.Resource("cronjobs"):              true,
 }
 
+// HasPodSpec returns true if the given object has a Pod spec
 func HasPodSpec(u unstructured.Unstructured) bool {
 	gk := u.GroupVersionKind().GroupKind()
 	_, ok := defaultPodSpecTypes[gk]
 	return ok
 }
 
+// ExtractPodSpec returns the metadata and Pod spec from the given object
 func ExtractPodSpec(u unstructured.Unstructured) (*metav1.ObjectMeta, *corev1.PodSpec, error) {
 	gk := u.GroupVersionKind().GroupKind()
 	obj, ok := defaultPodSpecTypes[gk]

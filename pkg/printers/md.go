@@ -22,6 +22,7 @@ import (
 	"github.com/undistro/marvin/pkg/types"
 )
 
+// MarkdownPrinter implements a Printer that prints the report in Markdown format
 type MarkdownPrinter struct{}
 
 func (*MarkdownPrinter) PrintObj(report types.Report, w io.Writer) error {

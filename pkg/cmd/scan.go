@@ -60,6 +60,7 @@ type ScanOptions struct {
 	gvrs         map[string]string
 }
 
+// NewScanOptions returns a ScanOptions with the default values
 func NewScanOptions() *ScanOptions {
 	return &ScanOptions{
 		ConfigFlags:           genericclioptions.NewConfigFlags(false),

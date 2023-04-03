@@ -26,6 +26,7 @@ import (
 	marvin "github.com/undistro/marvin/pkg/types"
 )
 
+// CELValidator is a Validator that performs CEL expressions
 type CELValidator struct {
 	check       marvin.Check
 	programs    []cel.Program
