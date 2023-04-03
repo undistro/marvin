@@ -193,7 +193,7 @@ func (o *ScanOptions) getChecks() ([]types.Check, error) {
 	if *o.ChecksPath != "" {
 		localChecks, err := loader.LoadChecks(*o.ChecksPath)
 		if err != nil {
-			o.log.Error(err, "load checks error", "path", *o.ChecksPath)
+			o.log.Error(err, "failed to load checks", "path", *o.ChecksPath)
 			return nil, fmt.Errorf("load checks error: %s", err.Error())
 		}
 		o.log.V(2).Info("custom checks loaded", "total", len(localChecks))
@@ -209,7 +209,7 @@ func (o *ScanOptions) runCheck(check types.Check) *types.CheckResult {
 	defer cr.UpdateStatus()
 	v, err := validator.Compile(check, o.apiResources, o.kubeVersion)
 	if err != nil {
-		log.Error(err, "compile error")
+		log.Error(err, "failed to compile check "+check.ID)
 		cr.AddError(fmt.Errorf("%s compile error: %s", check.Path, err.Error()))
 		return cr
 	}
@@ -227,7 +227,7 @@ func (o *ScanOptions) runCheck(check types.Check) *types.CheckResult {
 			}
 			passed, _, err := v.Validate(obj, check.Params)
 			if err != nil {
-				log.Error(err, "validate error")
+				log.Error(err, "failed to validate check "+check.ID)
 				cr.AddError(fmt.Errorf("%s validate error: %s", check.Path, err.Error()))
 				continue
 			}
