@@ -27,11 +27,17 @@ import (
 )
 
 var (
-	red     = color.New(color.FgRed).SprintfFunc()
-	redBold = color.New(color.FgRed, color.Bold).SprintfFunc()
-	yellow  = color.New(color.FgYellow).SprintfFunc()
-	blue    = color.New(color.FgBlue).SprintfFunc()
-	green   = color.New(color.FgGreen).SprintfFunc()
+	red        = color.New(color.FgRed).SprintfFunc()
+	redBold    = color.New(color.FgRed, color.Bold).SprintfFunc()
+	yellow     = color.New(color.FgYellow).SprintfFunc()
+	yellowBold = color.New(color.FgYellow, color.Bold)
+	blue       = color.New(color.FgBlue).SprintfFunc()
+	green      = color.New(color.FgGreen).SprintfFunc()
+
+	zoraBanner = `
+           Now you can use Marvin as a Zora plugin and see the results in a dashboard.
+           Access the documentation for more details:    https://zora-docs.undistro.io
+`
 )
 
 // TablePrinter implements a Printer that prints the report in table format
@@ -52,6 +58,8 @@ func (*TablePrinter) PrintObj(report types.Report, w io.Writer) error {
 	t.SetNoWhiteSpace(true)
 
 	renderTable(report, t)
+
+	yellowBold.Fprintln(w, zoraBanner)
 	return nil
 }
 
