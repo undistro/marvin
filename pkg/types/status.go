@@ -14,12 +14,16 @@
 
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type CheckStatus int
 
 const (
-	StatusPassed CheckStatus = iota
+	StatusUnknown CheckStatus = iota
+	StatusPassed
 	StatusSkipped
 	StatusFailed
 	StatusError
@@ -38,6 +42,26 @@ func (s CheckStatus) String() string {
 	default:
 		return ""
 	}
+}
+
+func ParseStatus(s string) CheckStatus {
+	switch s {
+	case "Passed":
+		return StatusPassed
+	case "Skipped":
+		return StatusSkipped
+	case "Failed":
+		return StatusFailed
+	case "Error":
+		return StatusError
+	default:
+		return StatusUnknown
+	}
+}
+
+func (s *CheckStatus) UnmarshalJSON(b []byte) error {
+	*s = ParseStatus(strings.Trim(string(b), "\""))
+	return nil
 }
 
 func (s CheckStatus) MarshalJSON() ([]byte, error) {
