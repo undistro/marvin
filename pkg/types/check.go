@@ -20,12 +20,13 @@ import (
 )
 
 type Check struct {
-	ID          string         `json:"id"`
-	Match       Match          `json:"match"`
-	Validations []Validation   `json:"validations"`
-	Params      map[string]any `json:"params"`
-	Severity    Severity       `json:"severity"`
-	Message     string         `json:"message"`
+	ID          string            `json:"id"`
+	Match       Match             `json:"match"`
+	Validations []Validation      `json:"validations"`
+	Params      map[string]any    `json:"params"`
+	Severity    Severity          `json:"severity"`
+	Message     string            `json:"message"`
+	Labels      map[string]string `json:"labels,omitempty"`
 
 	Builtin bool   `json:"builtin"`
 	Path    string `json:"path,omitempty"`
