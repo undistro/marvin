@@ -45,11 +45,12 @@ func (r *Report) HasError() bool {
 }
 
 type CheckResult struct {
-	ID       string   `json:"id"`
-	Message  string   `json:"message"`
-	Severity Severity `json:"severity"`
-	Builtin  bool     `json:"builtin"`
-	Path     string   `json:"path"`
+	ID       string            `json:"id"`
+	Message  string            `json:"message"`
+	Severity Severity          `json:"severity"`
+	Builtin  bool              `json:"builtin"`
+	Path     string            `json:"path"`
+	Labels   map[string]string `json:"labels,omitempty"`
 
 	Status  CheckStatus         `json:"status"`
 	Failed  map[string][]string `json:"failed"`
@@ -69,6 +70,7 @@ func NewCheckResult(check Check) *CheckResult {
 		Severity: check.Severity,
 		Builtin:  check.Builtin,
 		Path:     check.Path,
+		Labels:   check.Labels,
 
 		Failed:  map[string][]string{},
 		Passed:  map[string][]string{},
