@@ -28,7 +28,7 @@ type Check struct {
 	Message     string         `json:"message"`
 
 	Builtin bool   `json:"builtin"`
-	Path    string `json:"path"`
+	Path    string `json:"path,omitempty"`
 }
 
 type Match struct {
