@@ -55,3 +55,39 @@ func TestCheckStatusMarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckStatusUnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		input string
+		want  CheckStatus
+	}{
+		{
+			input: `{"status": "Passed"}`,
+			want:  StatusPassed,
+		},
+		{
+			input: `{"status": "Skipped"}`,
+			want:  StatusSkipped,
+		},
+		{
+			input: `{"status": "Failed"}`,
+			want:  StatusFailed,
+		},
+		{
+			input: `{"status": "Error"}`,
+			want:  StatusError,
+		},
+		{
+			input: `{"status": "foo"}`,
+			want:  StatusUnknown,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.want.String(), func(t *testing.T) {
+			var got statusHolder
+			err := json.Unmarshal([]byte(tt.input), &got)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.want, got.Status)
+		})
+	}
+}
