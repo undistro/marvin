@@ -1,0 +1,38 @@
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: marvin
+spec:
+  homepage: https://github.com/undistro/marvin
+  shortDescription: Scans your cluster for potential issues. Supports custom checks with CEL.
+  description: |
+    Marvin scans a k8s cluster by performing CEL expressions 
+    to report potential issues, misconfigurations and vulnerabilities.
+    
+    Marvin allows you to write your own checks by using CEL expressions.
+  version: {{ .TagName }}
+  platforms:
+  - selector:
+      matchLabels:
+        os: linux
+        arch: amd64
+    {{addURIAndSha "https://github.com/undistro/marvin/releases/download/{{ .TagName }}/marvin_Linux_x86_64.tar.gz" .TagName }}
+    bin: marvin
+  - selector:
+      matchLabels:
+        os: linux
+        arch: arm64
+    {{addURIAndSha "https://github.com/undistro/marvin/releases/download/{{ .TagName }}/marvin_Linux_arm64.tar.gz" .TagName }}
+    bin: marvin
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: amd64
+    {{addURIAndSha "https://github.com/undistro/marvin/releases/download/{{ .TagName }}/marvin_Darwin_x86_64.tar.gz" .TagName }}
+    bin: marvin
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: arm64
+    {{addURIAndSha "https://github.com/undistro/marvin/releases/download/{{ .TagName }}/marvin_Darwin_arm64.tar.gz" .TagName }}
+    bin: marvin

@@ -18,6 +18,8 @@ import (
 	"context"
 	"flag"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/go-logr/logr"
@@ -30,7 +32,7 @@ var noColor bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "marvin",
+	Use:   execName(),
 	Short: "A Kubernetes cluster scanner",
 }
 
@@ -39,6 +41,14 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func execName() string {
+	n := "marvin"
+	if strings.HasPrefix(filepath.Base(os.Args[0]), "kubectl-") {
+		return "kubectl-" + n
+	}
+	return n
 }
 
 func init() {
