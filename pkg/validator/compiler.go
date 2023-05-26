@@ -40,10 +40,10 @@ func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVers
 	for i, v := range check.Validations {
 		ast, issues := env.Compile(v.Expression)
 		if issues != nil && issues.Err() != nil {
-			return nil, fmt.Errorf("type-check error on validation %d: %s", i, issues.Err())
+			return nil, fmt.Errorf("validation[%d].expression: type-check error: %s", i, issues.Err())
 		}
 		if ast.OutputType() != cel.BoolType {
-			return nil, fmt.Errorf("cel expression must evaluate to a bool on validation %d", i)
+			return nil, fmt.Errorf("validation[%d].expression: cel expression must evaluate to a bool", i)
 		}
 		prg, err := env.Program(ast,
 			cel.EvalOptions(cel.OptOptimize),
@@ -51,7 +51,7 @@ func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVers
 			cel.InterruptCheckFrequency(100),
 		)
 		if err != nil {
-			return nil, fmt.Errorf("program construction error on validation %d: %s", i, err)
+			return nil, fmt.Errorf("validation[%d].expression: program construction error: %s", i, err)
 		}
 		prgs = append(prgs, prg)
 	}
