@@ -1,0 +1,18 @@
+id: CUSTOM-002
+severity: Low
+message: "Required labels"
+match:
+  resources:
+    - group: ""
+      version: v1
+      resource: pods
+params:
+  requiredLabels:
+    - app
+validations:
+  - expression: >
+      has(object.metadata.labels) &&
+      params.requiredLabels.all(req, 
+        req in object.metadata.labels
+      )
+    message: "Pod without required labels"
