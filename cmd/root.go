@@ -32,7 +32,7 @@ var noColor bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   execName(),
+	Use:   "marvin",
 	Short: "A Kubernetes cluster scanner",
 }
 
@@ -43,9 +43,13 @@ func Execute() {
 	}
 }
 
+func isKubectlPlugin() bool {
+	return strings.HasPrefix(filepath.Base(os.Args[0]), "kubectl-")
+}
+
 func execName() string {
 	n := "marvin"
-	if strings.HasPrefix(filepath.Base(os.Args[0]), "kubectl-") {
+	if isKubectlPlugin() {
 		return "kubectl " + n
 	}
 	return n
@@ -53,7 +57,11 @@ func execName() string {
 
 func init() {
 	cobra.OnInitialize(initNoColor)
-
+	if isKubectlPlugin() {
+		usageTpl := strings.NewReplacer("{{.UseLine}}", "kubectl {{.UseLine}}",
+			"{{.CommandPath}}", "kubectl {{.CommandPath}}").Replace(rootCmd.UsageTemplate())
+		rootCmd.SetUsageTemplate(usageTpl)
+	}
 	rootCmd.PersistentFlags().BoolVar(&noColor, "no-color", false, "Disable color output")
 	var allFlags flag.FlagSet
 	klog.InitFlags(&allFlags)
