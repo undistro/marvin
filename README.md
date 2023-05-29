@@ -65,7 +65,7 @@ You can install Marvin as a `kubectl` plugin via [Krew](https://krew.sigs.k8s.io
 kubectl krew install marvin
 ```
 
-Then you can use Marvin with `kubectl ` prefix:
+Then you can use Marvin with `kubectl` prefix:
 ```shell
 kubectl marvin version
 ```
