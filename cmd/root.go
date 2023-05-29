@@ -46,7 +46,7 @@ func Execute() {
 func execName() string {
 	n := "marvin"
 	if strings.HasPrefix(filepath.Base(os.Args[0]), "kubectl-") {
-		return "kubectl-" + n
+		return "kubectl " + n
 	}
 	return n
 }
