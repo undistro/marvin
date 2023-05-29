@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -29,6 +30,26 @@ var (
 	scanCmd = &cobra.Command{
 		Use:   "scan [flags]",
 		Short: "Scan a Kubernetes cluster",
+		Example: fmt.Sprintf(`  # Scan the current cluster
+  %[1]s scan
+
+  # Scan the 'foo' namespace of the current cluster
+  %[1]s scan -n foo
+
+  # Scan the current cluster providing custom checks
+  %[1]s scan --checks ./examples/
+
+  # Scan the current cluster providing custom checks and disabling the built-in checks
+  %[1]s scan --disable-builtin --checks ./examples/
+
+  # Scan a specific cluster using a kubeconfig file
+  %[1]s scan --kubeconfig /path/to/kubeconfig.yml
+
+  # Scan the current cluster, but do not fail even if there are errors in the report
+  %[1]s scan --no-fail
+
+  # Scan the current cluster and generate output in JSON format
+  %[1]s scan -o json`, execName()),
 		RunE: func(c *cobra.Command, args []string) error {
 			if err := scanOptions.Init(c.Context()); err != nil {
 				return err
