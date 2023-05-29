@@ -6,6 +6,7 @@
 </picture>
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/undistro/marvin.svg)](https://pkg.go.dev/github.com/undistro/marvin)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/marvin)](https://artifacthub.io/packages/search?repo=marvin)
 [![Test](https://github.com/undistro/marvin/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/undistro/marvin/actions/workflows/test.yml)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/undistro/marvin?sort=semver&color=brightgreen)
 ![GitHub](https://img.shields.io/github/license/undistro/marvin?color=brightgreen)
@@ -26,8 +27,9 @@ Marvin is also used as a plugin in [Zora](https://zora-docs.undistro.io/latest/)
 <!-- TOC -->
 * [Installation](#installation)
   * [Manually](#manually)
-  * [Install script](#install-script)
-  * [From source](#from-source)
+  * [Install via script](#install-via-script)
+  * [Install via Krew](#install-via-krew)
+  * [Install from source](#install-from-source)
 * [Usage](#usage)
   * [Built-in checks](#built-in-checks)
   * [Custom checks](#custom-checks)
@@ -39,7 +41,7 @@ Marvin is also used as a plugin in [Zora](https://zora-docs.undistro.io/latest/)
 # Installation
 
 The pre-compiled binaries are available in [GitHub releases page](https://github.com/undistro/marvin/releases) 
-and can be installed manually or via script.
+and can be installed manually, via script or as a `kubectl` plugin with [Krew](https://krew.sigs.k8s.io).
 
 ## Manually
 
@@ -48,7 +50,7 @@ and can be installed manually or via script.
 3. Make sure the binary has execution bit turned on (`chmod +x ./marvin`)
 4. Move the binary somewhere in your `$PATH` (e.g `sudo mv ./marvin /usr/local/bin/`)
 
-## Install script
+## Install via script
 
 The process above can be automated by the following script:
 
@@ -56,7 +58,19 @@ The process above can be automated by the following script:
 curl -sSfL https://raw.githubusercontent.com/undistro/marvin/main/install.sh | sh -s -- -b $HOME/.local/bin
 ```
 
-## From source
+## Install via [Krew](https://krew.sigs.k8s.io)
+
+You can install Marvin as a `kubectl` plugin via [Krew](https://krew.sigs.k8s.io):
+```shell
+kubectl krew install marvin
+```
+
+Then you can use Marvin with `kubectl ` prefix:
+```shell
+kubectl marvin version
+```
+
+## Install from source
 
 ```shell
 go install github.com/undistro/marvin@latest
