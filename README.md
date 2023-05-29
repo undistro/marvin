@@ -6,7 +6,7 @@
 </picture>
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/undistro/marvin.svg)](https://pkg.go.dev/github.com/undistro/marvin)
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/marvin)](https://artifacthub.io/packages/search?repo=marvin)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/marvin)](https://artifacthub.io/packages/krew/krew-index/marvin)
 [![Test](https://github.com/undistro/marvin/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/undistro/marvin/actions/workflows/test.yml)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/undistro/marvin?sort=semver&color=brightgreen)
 ![GitHub](https://img.shields.io/github/license/undistro/marvin?color=brightgreen)
