@@ -19,12 +19,35 @@ import (
 	"fmt"
 
 	"github.com/google/cel-go/cel"
+	"github.com/google/cel-go/ext"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
 	k8scellib "k8s.io/apiserver/pkg/cel/library"
 
 	"github.com/undistro/marvin/pkg/types"
 )
+
+var baseEnvOptions = []cel.EnvOption{
+	cel.HomogeneousAggregateLiterals(),
+	cel.EagerlyValidateDeclarations(true),
+	cel.DefaultUTCTimeZone(true),
+	ext.Strings(ext.StringsVersion(2)),
+	cel.CrossTypeNumericComparisons(true),
+	cel.OptionalTypes(),
+	k8scellib.URLs(),
+	k8scellib.Regex(),
+	k8scellib.Lists(),
+	cel.Variable(ObjectVarName, cel.DynType),
+	cel.Variable(ParamsVarName, cel.DynType),
+	cel.Variable(APIVersionsVarName, cel.ListType(cel.StringType)),
+	cel.Variable(KubeVersionVarName, cel.DynType),
+}
+
+var podSpecEnvOptions = []cel.EnvOption{
+	cel.Variable(PodMetaVarName, cel.DynType),
+	cel.Variable(PodSpecVarName, cel.DynType),
+	cel.Variable(AllContainersVarName, cel.ListType(cel.DynType)),
+}
 
 // Compile compiles the expressions of the given check and returns a Validator
 func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVersion *version.Info) (Validator, error) {
@@ -63,22 +86,9 @@ func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVers
 }
 
 func newEnv(podSpec bool) (*cel.Env, error) {
-	opts := []cel.EnvOption{
-		cel.HomogeneousAggregateLiterals(),
-		cel.EagerlyValidateDeclarations(true),
-		cel.DefaultUTCTimeZone(true),
-		cel.Variable(ObjectVarName, cel.DynType),
-		cel.Variable(ParamsVarName, cel.DynType),
-		cel.Variable(APIVersionsVarName, cel.ListType(cel.StringType)),
-		cel.Variable(KubeVersionVarName, cel.DynType),
-	}
-	opts = append(opts, k8scellib.ExtensionLibs...)
+	opts := baseEnvOptions
 	if podSpec {
-		opts = append(opts,
-			cel.Variable(PodMetaVarName, cel.DynType),
-			cel.Variable(PodSpecVarName, cel.DynType),
-			cel.Variable(AllContainersVarName, cel.ListType(cel.DynType)),
-		)
+		opts = append(opts, podSpecEnvOptions...)
 	}
 	return cel.NewEnv(opts...)
 }
