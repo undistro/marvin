@@ -76,7 +76,10 @@ func renderTable(report types.Report, t *tablewriter.Table) {
 		if report.Checks[i].TotalFailed != report.Checks[j].TotalFailed {
 			return report.Checks[i].TotalFailed > report.Checks[j].TotalFailed
 		}
-		return report.Checks[i].TotalPassed > report.Checks[j].TotalPassed
+		if report.Checks[i].TotalPassed != report.Checks[j].TotalPassed {
+			return report.Checks[i].TotalPassed > report.Checks[j].TotalPassed
+		}
+		return strings.Compare(report.Checks[i].ID, report.Checks[j].ID) < 0
 	})
 	for _, c := range report.Checks {
 		t.Append([]string{
