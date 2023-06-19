@@ -24,5 +24,6 @@ match:
 validations:
   - expression: >
       has(object.metadata.ownerReferences) && 
+      object.metadata.ownerReferences != null &&
       object.metadata.ownerReferences.size() > 0 &&
       object.metadata.ownerReferences.exists(o, has(o.controller) && o.controller == true)

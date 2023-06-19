@@ -67,3 +67,33 @@
       containers:
         - name: nginx
           image: nginx
+
+- name: "ownerReferences set to null"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      ownerReferences: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+
+- name: "ownerReferences empty"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      ownerReferences: []
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
