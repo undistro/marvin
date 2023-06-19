@@ -49,6 +49,7 @@ type ScanOptions struct {
 	NoFail                *bool
 	SkipAnnotation        *string
 	DisableAnnotationSkip *bool
+	DisableZoraBanner     *bool
 
 	ctx          context.Context
 	log          logr.Logger
@@ -70,6 +71,7 @@ func NewScanOptions() *ScanOptions {
 		OutputFormat:          pointer.String("table"),
 		NoFail:                pointer.Bool(false),
 		DisableAnnotationSkip: pointer.Bool(false),
+		DisableZoraBanner:     pointer.Bool(false),
 		SkipAnnotation:        pointer.String("marvin.undistro.io/skip"),
 	}
 }
@@ -95,6 +97,9 @@ func (o *ScanOptions) AddFlags(flags *pflag.FlagSet) {
 	if o.DisableAnnotationSkip != nil {
 		flags.BoolVar(o.DisableAnnotationSkip, "disable-annotation-skip", *o.DisableAnnotationSkip, "Disable resource skipping by annotation")
 	}
+	if o.DisableZoraBanner != nil {
+		flags.BoolVar(o.DisableZoraBanner, "disable-zora-banner", *o.DisableZoraBanner, "Disable Zora banner on output")
+	}
 }
 
 // Init initializes the kubernetes clients, get server version and API resources
@@ -112,7 +117,7 @@ func (o *ScanOptions) Init(ctx context.Context) error {
 	case "yaml":
 		printer = &printers.YAMLPrinter{}
 	case "table":
-		printer = &printers.TablePrinter{}
+		printer = &printers.TablePrinter{DisableZoraBanner: *o.DisableZoraBanner}
 	case "markdown":
 		color.NoColor = true
 		printer = &printers.MarkdownPrinter{}

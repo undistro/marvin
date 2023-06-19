@@ -41,9 +41,11 @@ var (
 )
 
 // TablePrinter implements a Printer that prints the report in table format
-type TablePrinter struct{}
+type TablePrinter struct {
+	DisableZoraBanner bool
+}
 
-func (*TablePrinter) PrintObj(report types.Report, w io.Writer) error {
+func (r *TablePrinter) PrintObj(report types.Report, w io.Writer) error {
 	t := tablewriter.NewWriter(w)
 	t.SetAutoWrapText(false)
 	t.SetAutoFormatHeaders(true)
@@ -59,7 +61,9 @@ func (*TablePrinter) PrintObj(report types.Report, w io.Writer) error {
 
 	renderTable(report, t)
 
-	yellowBold.Fprintln(w, zoraBanner)
+	if !r.DisableZoraBanner {
+		yellowBold.Fprintln(w, zoraBanner)
+	}
 	return nil
 }
 
