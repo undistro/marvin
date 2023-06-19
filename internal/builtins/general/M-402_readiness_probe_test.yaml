@@ -161,6 +161,21 @@
         name: job-28119672
         uid: 3c506232-bf9b-475b-add5-d5e850ba6ceb      
       spec:
+        containers:
+          - name: job
+            image: job
+
+- name: "ownerReferences set to null"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      ownerReferences: null  
+      labels:
+        app: nginx
+    spec:
       containers:
-        - name: job
-          image: job
+        - name: nginx
+          image: nginx

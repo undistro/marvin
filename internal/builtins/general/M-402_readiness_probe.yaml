@@ -38,6 +38,8 @@ validations:
       (
         object.kind == "Pod" && 
         has(object.metadata.ownerReferences) && 
+        object.metadata.ownerReferences != null &&
+        object.metadata.ownerReferences.size() > 0 &&
         object.metadata.ownerReferences.exists(o, has(o.kind) && has(o.apiVersion) && o.kind == "Job" && o.apiVersion == "batch/v1")
       )
       || 
