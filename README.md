@@ -11,6 +11,7 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/undistro/marvin?sort=semver&color=brightgreen)
 ![GitHub](https://img.shields.io/github/license/undistro/marvin?color=brightgreen)
 [![Go Report Card](https://goreportcard.com/badge/github.com/undistro/marvin)](https://goreportcard.com/report/github.com/undistro/marvin)
+![GitHub all releases](https://img.shields.io/github/downloads/undistro/marvin/total)
 
 </div>
 
@@ -147,7 +148,9 @@ If an expression evaluates to `false`, the check fails.
 This is how built-in Marvin checks are defined as well.
 You can see all the built-in checks in the [`internal/builtins` folder](internal/builtins) for examples.
 
-Then you can provide the directory path with your custom check files in the `-f/--checks` flag:
+If you want to quickly test CEL expressions from your browser, check out the [CEL Playground](https://playcel.undistro.io/).
+
+Then provide the directory path with your custom check files in the `-f/--checks` flag:
 
 ```shell
 marvin scan --disable-builtin --checks ./examples/
