@@ -147,7 +147,9 @@ If an expression evaluates to `false`, the check fails.
 This is how built-in Marvin checks are defined as well.
 You can see all the built-in checks in the [`internal/builtins` folder](internal/builtins) for examples.
 
-Then you can provide the directory path with your custom check files in the `-f/--checks` flag:
+You can also quickly test CEL expressions in the [CEL Playground](https://playcel.undistro.io/).
+
+Then provide the directory path with your custom check files in the `-f/--checks` flag:
 
 ```shell
 marvin scan --disable-builtin --checks ./examples/
