@@ -11,6 +11,7 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/undistro/marvin?sort=semver&color=brightgreen)
 ![GitHub](https://img.shields.io/github/license/undistro/marvin?color=brightgreen)
 [![Go Report Card](https://goreportcard.com/badge/github.com/undistro/marvin)](https://goreportcard.com/report/github.com/undistro/marvin)
+![GitHub all releases](https://img.shields.io/github/downloads/undistro/marvin/total)
 
 </div>
 
