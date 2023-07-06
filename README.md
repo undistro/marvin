@@ -35,6 +35,7 @@ Marvin is also used as a plugin in [Zora](https://zora-docs.undistro.io/latest/)
   * [Built-in checks](#built-in-checks)
   * [Custom checks](#custom-checks)
   * [Skipping resources](#skipping-resources)
+  * [RBAC](#rbac)
 * [Contributing](#contributing)
 * [License](#license)
 <!-- TOC -->
@@ -185,6 +186,58 @@ This flag will cause Marvin to perform all checks on all resources.
 If you prefer to use a different annotation to skip checks, 
 you can use the `--skip-annotation` flag to specify the annotation name. 
 Example: `--skip-annotation='my-company.com/skip-checks'`
+
+## RBAC
+
+Currently, the built-in checks look for the below resources
+and Marvin needs view (`get` and `list`) permission to verify them.
+
+- `v1/pods`
+- `v1/configmaps`
+- `v1/services`
+- `apps/v1/deployments`
+- `apps/v1/daemonsets`
+- `apps/v1/statefulsets`
+- `apps/v1/replicasets`
+- `batch/v1/cronjobs`
+- `batch/v1/jobs`
+
+<details>
+
+<summary> Here is a sample `ClusterRole` for Marvin: </summary>
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: marvin
+rules:
+  - apiGroups: [ "" ]
+    resources:
+      - configmaps
+      - pods
+      - services
+    verbs: [ "get", "list" ]
+  - apiGroups: [ "apps" ]
+    resources:
+      - daemonsets
+      - deployments
+      - statefulsets
+      - replicasets
+    verbs: [ "get", "list" ]
+  - apiGroups: [ batch ]
+    resources:
+      - jobs
+      - cronjobs
+    verbs: [ "get", "list" ]
+```
+
+</details>
+
+> **Note**
+> You can write a custom check to look at any resource. 
+> But Marvin needs view permission. 
+> Remember to update RBAC for new resources you want to check.
 
 # Contributing
 
