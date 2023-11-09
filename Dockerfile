@@ -34,9 +34,10 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build \
     -X github.com/undistro/marvin/pkg/version.commit=${COMMIT} \
     -X github.com/undistro/marvin/pkg/version.date=${DATE}" -a -o marvin main.go
 
-FROM alpine:3.17.2
+FROM alpine:3.18.4
 
-RUN addgroup -g 8494 -S nonroot && adduser -u 8494 -D -S nonroot -G nonroot
+RUN addgroup -g 8494 -S nonroot && adduser -u 8494 -D -S nonroot -G nonroot \
+    && apk add libcrypto3=3.1.4-r0 libssl3=3.1.4-r0 # fix CVE-2023-5363
 USER 8494:8494
 
 WORKDIR /
