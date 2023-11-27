@@ -15,15 +15,33 @@
 
 id: M-500
 severity: Medium
-message: "Required namespace"
+message: "The default namespace should not be used"
 match:
   resources:
+    resources:
+    - group: ""
+      version: v1
+      resource: pods
     - group: apps
       version: v1
       resource: deployments
+    - group: apps
+      version: v1
+      resource: daemonsets
+    - group: apps
+      version: v1
+      resource: statefulsets
+    - group: apps
+      version: v1
+      resource: replicasets
+    - group: batch
+      version: v1
+      resource: cronjobs
+    - group: batch
+      version: v1
+      resource: jobs
 validations:
   - expression: >
      has(object.metadata.namespace)
      && (type(object.metadata.namespace) == string)
-     && !(object.metadata.namespace == 'default')	
-    message: "Namespace not found"
+     && !(object.metadata.namespace == 'default')
