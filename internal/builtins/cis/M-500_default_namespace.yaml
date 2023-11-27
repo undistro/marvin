@@ -18,7 +18,6 @@ severity: Medium
 message: "The default namespace should not be used"
 match:
   resources:
-    resources:
     - group: ""
       version: v1
       resource: pods

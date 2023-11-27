@@ -56,7 +56,6 @@
         matchLabels:
           app: nginx
 
-
 - name: "Namespace specified"
   pass: true
   input: |
