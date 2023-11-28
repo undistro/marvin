@@ -3,7 +3,7 @@
 In the table below, you can view all checks present on Marvin. Click on the #ID column item for more details about each check.
 
 | Framework        | # ID                                                                       | Severity | Message                                          |
-|------------------|---------------------------------------------------------------------------|----------|-----------------------------------------------------|
+|------------------|---------------------------------------------------------------------------|----------|--------------------------------------------------------|
 | CIS Benchmarks   | [M-500](/internal/builtins/cis/M-500_default_namespace.yaml)             | Medium   | Workloads in default namespace                   |
 | General          | [M-400](/internal/builtins/general/M-400_image_tag_latest.yaml)          | Medium   | Image tagged latest                              |
 |                  | [M-401](/internal/builtins/general/M-401_unmanaged_pod.yaml)             | Low      | Unmanaged Pod                                    |
