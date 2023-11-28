@@ -4,7 +4,7 @@ In the table below, you can view all checks present on Marvin. Click on the #ID 
 
 | Framework        | # ID                                                                       | Severity | Message                                          |
 |------------------|---------------------------------------------------------------------------|----------|--------------------------------------------------|
-| CIS Benchmarks   | [M-500](/internal/builtins/cis/M-500_default_namespace.yaml)             | Medium   | The default namespace should not be used          |
+| CIS Benchmarks   | [M-500](/internal/builtins/cis/M-500_default_namespace.yaml)             | Medium   | Workloads in default namespace                   |
 | General          | [M-400](/internal/builtins/general/M-400_image_tag_latest.yaml)          | Medium   | Image tagged latest                              |
 |                  | [M-401](/internal/builtins/general/M-401_unmanaged_pod.yaml)             | Low      | Unmanaged Pod                                    |
 |                  | [M-402](/internal/builtins/general/M-402_readiness_probe.yaml)           | Medium   | Readiness and startup probe not configured       |
