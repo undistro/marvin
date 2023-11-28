@@ -15,7 +15,7 @@
 
 id: M-500
 severity: Medium
-message: "The default namespace should not be used"
+message: "Workloads in default namespace"
 match:
   resources:
     - group: ""
