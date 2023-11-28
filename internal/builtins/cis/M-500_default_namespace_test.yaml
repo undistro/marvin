@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: "Namespace specified like default"
+- name: "Namespace set to default"
   pass: false
   input: |
     apiVersion: apps/v1
