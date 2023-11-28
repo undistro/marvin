@@ -13,7 +13,7 @@ In the table below, you can view all checks present on Marvin. Click on the #ID 
 |                  | [M-405](/internal/builtins/general/M-405_cpu_requests.yaml)              | Medium   | CPU requests not specified                       |
 |                  | [M-406](/internal/builtins/general/M-406_memory_limit.yaml)              | Medium   | Memory not limited                               |
 |                  | [M-407](/internal/builtins/general/M-407_cpu_limit.yaml)                 | Medium   | CPU not limited                                  |
-| NSA              | [M-300](/internal/builtins/nsa/M-300_read_only_root_filesystem.yml)     | Low      | Root filesystem write allowed                    |
+| NSA-CISA         | [M-300](/internal/builtins/nsa/M-300_read_only_root_filesystem.yml)     | Low      | Root filesystem write allowed                    |
 | MITRE ATT&CK     | [M-200](/internal/builtins/mitre/M-200_allowed_registries.yml)          | Medium   | Image registry not allowed                       |
 |                  | [M-201](/internal/builtins/mitre/M-201_app_credentials.yml)              | High     | Application credentials stored in configuration files |
 |                  | [M-202](/internal/builtins/mitre/M-202_auto_mount_service_account.yml)  | Low      | Automounted service account token                 |
