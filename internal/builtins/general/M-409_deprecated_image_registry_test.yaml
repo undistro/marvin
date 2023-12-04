@@ -1,0 +1,85 @@
+# Copyright 2023 Undistro Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: "registry not defined"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+
+
+
+- name: "registry deprecated"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: registry
+          image: registry.com:80/nginx@sha256:asdf
+        - name: ok2
+          image: registry.com:80/nginx@sha256:asdf
+        - name: wrong
+          image: k8s.grc.io/pause
+
+- name: "registry deprecated middle"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: registry
+          image: registry.com:80/nginx@sha256:asdf
+        - name: wrong
+          image: k8s.grc.io/pause
+        - name: ok2
+          image: registry.com:80/nginx@sha256:asdf
+
+
+
+- name: "registry deprecated"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: registry
+          image: registry.com:80/nginx@sha256:asdf
+        - name:  registryOK
+          image: registry.com:80/nginx@sha256:asdf
+        - name: wrong
+          image: k8s.grc.io/pause
