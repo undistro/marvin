@@ -16,6 +16,7 @@ In the table below, you can view all checks present on Marvin. Click on the #ID 
 |                  | [M-407](/internal/builtins/general/M-407_cpu_limit.yaml)                 | Medium   | CPU not limited                                       |
 |                  | [M-408](/internal/builtins/general/M-408_sudo_container_entrypoint.yaml) | Medium   | Sudo in container entrypoint                          |
 |                  | [M-409](/internal/builtins/general/M-409_deprecated_image_registry.yaml) | Medium   | Deprecated image registry                             |
+|                  | [M-410](/internal/builtins/general/M-410_resource_using_invalid_restartpolicy.yaml) | Medium| Resource is using an invalid restartPolicy    |
 | NSA-CISA         | [M-300](/internal/builtins/nsa/M-300_read_only_root_filesystem.yml)      | Low      | Root filesystem write allowed                         |
 | MITRE ATT&CK     | [M-200](/internal/builtins/mitre/M-200_allowed_registries.yml)           | Medium   | Image registry not allowed                            |
 |                  | [M-201](/internal/builtins/mitre/M-201_app_credentials.yml)              | High     | Application credentials stored in configuration files |
