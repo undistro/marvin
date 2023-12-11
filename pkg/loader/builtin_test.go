@@ -23,5 +23,5 @@ import (
 func TestBuiltins(t *testing.T) {
 	assert.NotNil(t, Builtins)
 	assert.Greater(t, len(Builtins), 0)
-	assert.Equal(t, len(Builtins), 33)
+	assert.Equal(t, len(Builtins), 34)
 }
