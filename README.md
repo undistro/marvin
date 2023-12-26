@@ -163,7 +163,7 @@ Medium     CUSTOM-001   Replicas limit   Passed   0        2        0
 
 The flag `--disable-builtin` disables the built-in Marvin checks.  
 
-## Variables podSpec and allContainers 
+### Variables podSpec and allContainers 
 
 The `podSpec` and `allContainers` inputs are available for expressions.  
 
