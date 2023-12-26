@@ -161,12 +161,19 @@ SEVERITY   ID           CHECK            STATUS   FAILED   PASSED   SKIPPED
 Medium     CUSTOM-001   Replicas limit   Passed   0        2        0         
 ```
 
-The flag `--disable-builtin` disables the built-in Marvin checks.
+The flag `--disable-builtin` disables the built-in Marvin checks.  
 
-If the check matches a PodSpec (`Pod`, `ReplicationController`, `ReplicaSet`, `Deployment`, `StatefulSet`, `DaemonSet`, `Job` or `CronJob`)
-the `podSpec` and `allContainers` inputs are available for expressions.
+## Variables podSpec and allContainers 
 
-The `allContainers` input is a list of all containers including `initContainers` and `ephemeralContainers`.
+The `podSpec` and `allContainers` inputs are available for expressions.  
+
+If the check matches a PodSpec (`Pod`, `ReplicationController`, `ReplicaSet`, `Deployment`, `StatefulSet`, `DaemonSet`, `Job` or `CronJob`), with `podSpec` will check the correct key and value from Kubernetes objects above.    
+
+See this example with [podSpec](https://github.com/undistro/marvin/blob/0e81c81a7d30111df0b91010d57f100ede533cc1/internal/builtins/general/M-410_resource_using_invalid_restartpolicy.yaml#L32C37-L32C37, "podSpec").
+
+The `allContainers` input is a list of all containers including `initContainers` and `ephemeralContainers`. With, `allContainers` will check all keys and values for containers presents on Kubernetes objects.   
+
+See this example with [allContainers](https://github.com/undistro/marvin/blob/0e81c81a7d30111df0b91010d57f100ede533cc1/internal/builtins/general/M-400_image_tag_latest.yaml#L44, "allContainers").
 
 ## Skipping resources
 
