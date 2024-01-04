@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
-  <img alt="Zora logo" src="assets/banner-light.png">
+  <img alt="Marvin logo" src="assets/banner-light.png">
 </picture>
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/undistro/marvin.svg)](https://pkg.go.dev/github.com/undistro/marvin)
@@ -39,6 +39,8 @@ Marvin is also used as a plugin in [Zora](https://zora-docs.undistro.io/latest/)
 * [Contributing](#contributing)
 * [License](#license)
 <!-- TOC -->
+
+_Please [star :star:](https://github.com/undistro/marvin/stargazers) the repo if you want us to continue developing and improving Marvin!_ :grin:
 
 # Installation
 
