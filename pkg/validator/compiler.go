@@ -31,12 +31,17 @@ var baseEnvOptions = []cel.EnvOption{
 	cel.HomogeneousAggregateLiterals(),
 	cel.EagerlyValidateDeclarations(true),
 	cel.DefaultUTCTimeZone(true),
-	ext.Strings(ext.StringsVersion(2)),
 	cel.CrossTypeNumericComparisons(true),
 	cel.OptionalTypes(),
+
+	ext.Strings(ext.StringsVersion(2)),
+	ext.Sets(),
+
 	k8scellib.URLs(),
 	k8scellib.Regex(),
 	k8scellib.Lists(),
+	k8scellib.Quantity(),
+
 	cel.Variable(ObjectVarName, cel.DynType),
 	cel.Variable(ParamsVarName, cel.DynType),
 	cel.Variable(APIVersionsVarName, cel.ListType(cel.StringType)),
@@ -68,11 +73,7 @@ func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVers
 		if ast.OutputType() != cel.BoolType {
 			return nil, fmt.Errorf("validation[%d].expression: cel expression must evaluate to a bool", i)
 		}
-		prg, err := env.Program(ast,
-			cel.EvalOptions(cel.OptOptimize),
-			cel.OptimizeRegex(k8scellib.ExtensionLibRegexOptimizations...),
-			cel.InterruptCheckFrequency(100),
-		)
+		prg, err := env.Program(ast, cel.EvalOptions(cel.OptOptimize))
 		if err != nil {
 			return nil, fmt.Errorf("validation[%d].expression: program construction error: %s", i, err)
 		}

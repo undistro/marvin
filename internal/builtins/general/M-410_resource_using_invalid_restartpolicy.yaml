@@ -15,7 +15,7 @@
 id: M-410
 slug: resource using invalid restartPolicy
 severity: Medium
-message: "Resource is using an invalid restartPolicy"
+message: "Not allowed restartPolicy"
 match:
   resources:
     - group: apps

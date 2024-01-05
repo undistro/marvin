@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
-  <img alt="Zora logo" src="assets/banner-light.png">
+  <img alt="Marvin logo" src="assets/banner-light.png">
 </picture>
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/undistro/marvin.svg)](https://pkg.go.dev/github.com/undistro/marvin)
@@ -39,6 +39,8 @@ Marvin is also used as a plugin in [Zora](https://zora-docs.undistro.io/latest/)
 * [Contributing](#contributing)
 * [License](#license)
 <!-- TOC -->
+
+_Please [star :star:](https://github.com/undistro/marvin/stargazers) the repo if you want us to continue developing and improving Marvin!_ :grin:
 
 # Installation
 
@@ -88,36 +90,40 @@ marvin scan
 ```
 ```
 SEVERITY   ID      CHECK                                                   STATUS   FAILED   PASSED   SKIPPED 
-High       M-101   Host namespaces                                         Failed   8        7        0         
-High       M-104   HostPath volume                                         Failed   8        7        0         
-High       M-201   Application credentials stored in configuration files   Failed   2        25       0         
-High       M-102   Privileged container                                    Failed   2        13       0         
-High       M-103   Insecure capabilities                                   Failed   2        13       0         
-High       M-100   Privileged access to the Windows node                   Passed   0        15       0         
-High       M-105   Not allowed hostPort                                    Passed   0        15       0         
-Medium     M-113   Container could be running as root user                 Failed   15       0        0         
-Medium     M-407   CPU not limited                                         Failed   13       2        0         
-Medium     M-406   Memory not limited                                      Failed   9        6        0         
-Medium     M-404   Memory requests not specified                           Failed   8        7        0         
-Medium     M-402   Readiness and startup probe not configured              Failed   7        8        0         
-Medium     M-403   Liveness probe not configured                           Failed   7        8        0         
-Medium     M-405   CPU requests not specified                              Failed   5        10       0         
-Medium     M-106   Forbidden AppArmor profile                              Passed   0        15       0         
-Medium     M-107   Forbidden SELinux options                               Passed   0        15       0         
-Medium     M-108   Forbidden proc mount type                               Passed   0        15       0         
-Medium     M-109   Forbidden seccomp profile                               Passed   0        15       0         
-Medium     M-110   Unsafe sysctls                                          Passed   0        15       0         
-Medium     M-112   Allowed privilege escalation                            Passed   0        15       0         
-Medium     M-200   Image registry not allowed                              Passed   0        15       0         
-Medium     M-400   Image tagged latest                                     Passed   0        15       0         
-Low        M-116   Not allowed added/dropped capabilities                  Failed   15       0        0         
-Low        M-202   Automounted service account token                       Failed   15       0        0         
-Low        M-115   Not allowed seccomp profile                             Failed   11       4        0         
-Low        M-300   Root filesystem write allowed                           Failed   11       4        0         
-Low        M-111   Not allowed volume type                                 Failed   8        7        0         
-Low        M-203   SSH server running inside container                     Passed   0        17       0         
-Low        M-114   Container running as root UID                           Passed   0        15       0         
-Low        M-401   Unmanaged Pod                                           Passed   0        9        0         
+High       M-101   Host namespaces                                         Failed   8        25       0         
+High       M-104   HostPath volume                                         Failed   8        25       0         
+High       M-201   Application credentials stored in configuration files   Failed   2        45       0         
+High       M-102   Privileged container                                    Failed   2        31       0         
+High       M-103   Insecure capabilities                                   Failed   2        31       0         
+High       M-100   Privileged access to the Windows node                   Passed   0        33       0         
+High       M-105   Not allowed hostPort                                    Passed   0        33       0         
+Medium     M-113   Container could be running as root user                 Failed   33       0        0         
+Medium     M-407   CPU not limited                                         Failed   31       2        0         
+Medium     M-406   Memory not limited                                      Failed   27       6        0         
+Medium     M-404   Memory requests not specified                           Failed   26       7        0         
+Medium     M-402   Readiness and startup probe not configured              Failed   25       8        0         
+Medium     M-403   Liveness probe not configured                           Failed   25       8        0         
+Medium     M-405   CPU requests not specified                              Failed   23       10       0         
+Medium     M-106   Forbidden AppArmor profile                              Passed   0        33       0         
+Medium     M-107   Forbidden SELinux options                               Passed   0        33       0         
+Medium     M-108   Forbidden proc mount type                               Passed   0        33       0         
+Medium     M-109   Forbidden seccomp profile                               Passed   0        33       0         
+Medium     M-110   Unsafe sysctls                                          Passed   0        33       0         
+Medium     M-112   Allowed privilege escalation                            Passed   0        33       0         
+Medium     M-200   Image registry not allowed                              Passed   0        33       0         
+Medium     M-400   Image tagged latest                                     Passed   0        33       0         
+Medium     M-408   Sudo in container entrypoint                            Passed   0        33       0         
+Medium     M-409   Deprecated image registry                               Passed   0        33       0         
+Medium     M-500   Workload in default namespace                           Passed   0        33       0         
+Medium     M-410   Not allowed restartPolicy                               Passed   0        18       0         
+Low        M-116   Not allowed added/dropped capabilities                  Failed   33       0        0         
+Low        M-202   Automounted service account token                       Failed   33       0        0         
+Low        M-115   Not allowed seccomp profile                             Failed   29       4        0         
+Low        M-300   Root filesystem write allowed                           Failed   29       4        0         
+Low        M-111   Not allowed volume type                                 Failed   8        25       0         
+Low        M-203   SSH server running inside container                     Passed   0        39       0         
+Low        M-114   Container running as root UID                           Passed   0        33       0         
+Low        M-401   Unmanaged Pod                                           Passed   0        15       0         
 ```
 
 The default output format is `table` which represents a summary of checks result. 
