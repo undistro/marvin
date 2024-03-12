@@ -38,7 +38,7 @@ type activation struct {
 	params        any
 	apiVersions   []string
 	kubeVersion   any
-	variables     map[string]any
+	variables     any
 }
 
 func (a *activation) ResolveName(name string) (any, bool) {

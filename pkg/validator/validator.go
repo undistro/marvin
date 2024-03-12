@@ -19,11 +19,12 @@ import (
 
 	"github.com/google/cel-go/cel"
 	"github.com/google/cel-go/common/types"
+	"github.com/google/cel-go/common/types/ref"
+	marvin "github.com/undistro/marvin/pkg/types"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/version"
-
-	marvin "github.com/undistro/marvin/pkg/types"
+	"k8s.io/apiserver/pkg/cel/lazy"
 )
 
 // CELValidator is a Validator that performs CEL expressions
@@ -56,13 +57,11 @@ func (r *CELValidator) Validate(obj unstructured.Unstructured, params any) (bool
 	if err := r.setPodSpecParams(obj, input); err != nil {
 		return false, "", err
 	}
+	lazyMap := lazy.NewMapValue(types.MapType)
 	for _, v := range r.variables {
-		val, _, err := v.program.Eval(input)
-		if err != nil {
-			return false, "", fmt.Errorf("failed to evaluate variable %q: %s", v.name, err)
-		}
-		input.variables[v.name] = val.Value()
+		lazyMap.Append(v.name, callback(v, input))
 	}
+	input.variables = lazyMap
 	for i, prg := range r.programs {
 		out, _, err := prg.Eval(input)
 		if err != nil {
@@ -73,6 +72,16 @@ func (r *CELValidator) Validate(obj unstructured.Unstructured, params any) (bool
 		}
 	}
 	return true, "", nil
+}
+
+func callback(v compiledVariables, activation any) lazy.GetFieldFunc {
+	return func(_ *lazy.MapValue) ref.Val {
+		val, _, err := v.program.Eval(activation)
+		if err != nil {
+			return types.NewErr("variable %q fails to evaluate: %v", v.name, err)
+		}
+		return val
+	}
 }
 
 func (r *CELValidator) setPodSpecParams(obj unstructured.Unstructured, input *activation) error {
