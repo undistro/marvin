@@ -94,14 +94,14 @@ func newEnv(check types.Check) (*cel.Env, error) {
 	return cel.NewEnv(opts...)
 }
 
-func compileVariables(env *cel.Env, vars []types.Variable) ([]compiledVariables, error) {
-	variables := make([]compiledVariables, 0, len(vars))
+func compileVariables(env *cel.Env, vars []types.Variable) ([]compiledVariable, error) {
+	variables := make([]compiledVariable, 0, len(vars))
 	for _, v := range vars {
 		prg, err := compileExpression(env, v.Expression, cel.AnyType)
 		if err != nil {
 			return nil, fmt.Errorf("variables[%q].expression: %s", v.Name, err)
 		}
-		variables = append(variables, compiledVariables{name: v.Name, program: prg})
+		variables = append(variables, compiledVariable{name: v.Name, program: prg})
 	}
 	return variables, nil
 }

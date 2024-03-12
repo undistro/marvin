@@ -33,10 +33,10 @@ type CELValidator struct {
 	programs    []cel.Program
 	apiVersions []string
 	kubeVersion *version.Info
-	variables   []compiledVariables
+	variables   []compiledVariable
 }
 
-type compiledVariables struct {
+type compiledVariable struct {
 	name    string
 	program cel.Program
 }
@@ -74,7 +74,7 @@ func (r *CELValidator) Validate(obj unstructured.Unstructured, params any) (bool
 	return true, "", nil
 }
 
-func callback(v compiledVariables, activation any) lazy.GetFieldFunc {
+func callback(v compiledVariable, activation any) lazy.GetFieldFunc {
 	return func(_ *lazy.MapValue) ref.Val {
 		val, _, err := v.program.Eval(activation)
 		if err != nil {
