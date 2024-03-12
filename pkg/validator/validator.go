@@ -30,9 +30,14 @@ import (
 type CELValidator struct {
 	check       marvin.Check
 	programs    []cel.Program
-	hasPodSpec  bool
 	apiVersions []string
 	kubeVersion *version.Info
+	variables   []compiledVariables
+}
+
+type compiledVariables struct {
+	name    string
+	program cel.Program
 }
 
 func (r *CELValidator) SetAPIVersions(apiVersions []string) {
@@ -47,9 +52,16 @@ func (r *CELValidator) Validate(obj unstructured.Unstructured, params any) (bool
 	if params == nil {
 		params = r.check.Params
 	}
-	input := &activation{object: obj.UnstructuredContent(), apiVersions: r.apiVersions, params: params}
+	input := &activation{object: obj.UnstructuredContent(), apiVersions: r.apiVersions, params: params, variables: make(map[string]any)}
 	if err := r.setPodSpecParams(obj, input); err != nil {
 		return false, "", err
+	}
+	for _, v := range r.variables {
+		val, _, err := v.program.Eval(input)
+		if err != nil {
+			return false, "", fmt.Errorf("failed to evaluate variable %q: %s", v.name, err)
+		}
+		input.variables[v.name] = val.Value()
 	}
 	for i, prg := range r.programs {
 		out, _, err := prg.Eval(input)
@@ -64,7 +76,7 @@ func (r *CELValidator) Validate(obj unstructured.Unstructured, params any) (bool
 }
 
 func (r *CELValidator) setPodSpecParams(obj unstructured.Unstructured, input *activation) error {
-	if !r.hasPodSpec || !HasPodSpec(obj) {
+	if !HasPodSpec(obj) {
 		return nil
 	}
 	meta, spec, err := ExtractPodSpec(obj)

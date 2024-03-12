@@ -23,6 +23,7 @@ type Check struct {
 	ID          string            `json:"id"`
 	Match       Match             `json:"match"`
 	Validations []Validation      `json:"validations"`
+	Variables   []Variable        `json:"variables"`
 	Params      map[string]any    `json:"params"`
 	Severity    Severity          `json:"severity"`
 	Message     string            `json:"message"`
@@ -49,6 +50,11 @@ func (r *ResourceRule) ToGVR() schema.GroupVersionResource {
 type Validation struct {
 	Expression string `json:"expression"`
 	Message    string `json:"message,omitempty"`
+}
+
+type Variable struct {
+	Name       string `json:"name"`
+	Expression string `json:"expression"`
 }
 
 type Test struct {

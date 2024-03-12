@@ -26,6 +26,7 @@ const (
 	AllContainersVarName = "allContainers"
 	APIVersionsVarName   = "apiVersions"
 	KubeVersionVarName   = "kubeVersion"
+	VariableVarName      = "variables"
 )
 
 // activation implements the interpreter.Activation
@@ -37,6 +38,7 @@ type activation struct {
 	params        any
 	apiVersions   []string
 	kubeVersion   any
+	variables     map[string]any
 }
 
 func (a *activation) ResolveName(name string) (any, bool) {
@@ -55,6 +57,8 @@ func (a *activation) ResolveName(name string) (any, bool) {
 		return a.apiVersions, true
 	case KubeVersionVarName:
 		return a.kubeVersion, true
+	case VariableVarName:
+		return a.variables, true
 	default:
 		return nil, false
 	}
