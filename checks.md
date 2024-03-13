@@ -36,6 +36,6 @@ In the table below, you can view all checks present on Marvin. Click on the #ID 
 | PSS - Restricted | [M-111](/internal/builtins/pss/restricted/M-111_volume_types.yml)        | Low      | Not allowed volume type                               |
 |                  | [M-112](/internal/builtins/pss/restricted/M-112_privilege_escalation.yml)| Medium   | Allowed privilege escalation                          |
 |                  | [M-113](/internal/builtins/pss/restricted/M-113_run_as_non_root.yml)     | Medium   | Container could be running as root user               |
-|                  | [M-114](/internal/builtins/pss/restricted/M-114_run_as_user.yml)         | Low      | Container running as root UID                         |
+|                  | [M-114](/internal/builtins/pss/restricted/M-114_run_as_user.yml)         | Medium   | Container running as root UID                         |
 |                  | [M-115](/internal/builtins/pss/restricted/M-115_seccomp.yml)             | Low      | Not allowed seccomp profile                           |
 |                  | [M-116](/internal/builtins/pss/restricted/M-116_capabilities.yml)        | Low      | Not allowed added/dropped capabilities                |
