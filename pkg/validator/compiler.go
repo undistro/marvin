@@ -43,9 +43,14 @@ var baseEnvOptions = []cel.EnvOption{
 	k8scellib.Quantity(),
 
 	cel.Variable(ObjectVarName, cel.DynType),
-	cel.Variable(ParamsVarName, cel.DynType),
 	cel.Variable(APIVersionsVarName, cel.ListType(cel.StringType)),
 	cel.Variable(KubeVersionVarName, cel.DynType),
+}
+
+var programOptions = []cel.ProgramOption{
+	cel.EvalOptions(cel.OptOptimize),
+	cel.CostLimit(1000000),
+	cel.InterruptCheckFrequency(100),
 }
 
 var podSpecEnvOptions = []cel.EnvOption{
@@ -54,42 +59,86 @@ var podSpecEnvOptions = []cel.EnvOption{
 	cel.Variable(AllContainersVarName, cel.ListType(cel.DynType)),
 }
 
-// Compile compiles the expressions of the given check and returns a Validator
+// Compile compiles variables and expressions of the given check and returns a Validator
 func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVersion *version.Info) (Validator, error) {
 	if len(check.Validations) == 0 {
 		return nil, errors.New("invalid check: a check must have at least 1 validation")
 	}
-	hasPodSpec := MatchesPodSpec(check.Match.Resources)
-	env, err := newEnv(hasPodSpec)
+	env, err := newEnv(check)
 	if err != nil {
 		return nil, fmt.Errorf("environment construction error %s", err.Error())
 	}
-	prgs := make([]cel.Program, 0, len(check.Validations))
-	for i, v := range check.Validations {
-		ast, issues := env.Compile(v.Expression)
-		if issues != nil && issues.Err() != nil {
-			return nil, fmt.Errorf("validation[%d].expression: type-check error: %s", i, issues.Err())
-		}
-		if ast.OutputType() != cel.BoolType {
-			return nil, fmt.Errorf("validation[%d].expression: cel expression must evaluate to a bool", i)
-		}
-		prg, err := env.Program(ast, cel.EvalOptions(cel.OptOptimize))
-		if err != nil {
-			return nil, fmt.Errorf("validation[%d].expression: program construction error: %s", i, err)
-		}
-		prgs = append(prgs, prg)
-	}
+
+	variables, err := compileVariables(env, check.Variables)
+
+	prgs, err := compileValidations(env, check.Validations)
+
 	apiVersions := make([]string, 0, len(apiResources))
 	for _, resource := range apiResources {
 		apiVersions = append(apiVersions, resource.GroupVersion)
 	}
-	return &CELValidator{check: check, programs: prgs, hasPodSpec: hasPodSpec, apiVersions: apiVersions, kubeVersion: kubeVersion}, nil
+	return &CELValidator{check: check, programs: prgs, apiVersions: apiVersions, kubeVersion: kubeVersion, variables: variables}, nil
 }
 
-func newEnv(podSpec bool) (*cel.Env, error) {
+func newEnv(check types.Check) (*cel.Env, error) {
 	opts := baseEnvOptions
-	if podSpec {
+	if MatchesPodSpec(check.Match.Resources) {
 		opts = append(opts, podSpecEnvOptions...)
 	}
+	if len(check.Variables) > 0 {
+		opts = append(opts, cel.Variable(VariableVarName, cel.MapType(cel.StringType, cel.DynType)))
+	}
+	if len(check.Params) > 0 {
+		opts = append(opts, cel.Variable(ParamsVarName, cel.DynType))
+	}
 	return cel.NewEnv(opts...)
+}
+
+func compileVariables(env *cel.Env, vars []types.Variable) ([]compiledVariable, error) {
+	variables := make([]compiledVariable, 0, len(vars))
+	for _, v := range vars {
+		prg, err := compileExpression(env, v.Expression, cel.AnyType)
+		if err != nil {
+			return nil, fmt.Errorf("variables[%q].expression: %s", v.Name, err)
+		}
+		variables = append(variables, compiledVariable{name: v.Name, program: prg})
+	}
+	return variables, nil
+}
+
+func compileValidations(env *cel.Env, vals []types.Validation) ([]cel.Program, error) {
+	prgs := make([]cel.Program, 0, len(vals))
+	for i, v := range vals {
+		prg, err := compileExpression(env, v.Expression, cel.BoolType)
+		if err != nil {
+			return nil, fmt.Errorf("validations[%d].expression: %s", i, err)
+		}
+		prgs = append(prgs, prg)
+	}
+	return prgs, nil
+}
+
+func compileExpression(env *cel.Env, exp string, allowedTypes ...*cel.Type) (cel.Program, error) {
+	ast, issues := env.Compile(exp)
+	if issues != nil && issues.Err() != nil {
+		return nil, fmt.Errorf("type-check error: %s", issues.Err())
+	}
+	found := false
+	for _, t := range allowedTypes {
+		if ast.OutputType() == t || cel.AnyType == t {
+			found = true
+			break
+		}
+	}
+	if !found {
+		if len(allowedTypes) == 1 {
+			return nil, fmt.Errorf("must evaluate to %v", allowedTypes[0].String())
+		}
+		return nil, fmt.Errorf("must evaluate to one of %v", allowedTypes)
+	}
+	prg, err := env.Program(ast, programOptions...)
+	if err != nil {
+		return nil, fmt.Errorf("program construction error: %s", err)
+	}
+	return prg, nil
 }

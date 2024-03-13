@@ -14,7 +14,6 @@
 
 - name: "securityContext not specified"
   pass: false
-  message: "Container could be running as root user"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -34,9 +33,31 @@
         matchLabels:
           app: nginx
 
-- name: "Pod explicitly set runAsNonRoot to false and Container to true"
+- name: "Pod set runAsNonRoot to false"
   pass: false
-  message: "Container could be running as root user"
+  input: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      template:
+        metadata:
+          name: nginx
+          labels:
+            app: nginx
+        spec:
+          securityContext:
+            runAsNonRoot: false
+          containers:
+            - name: nginx
+              image: nginx
+      selector:
+        matchLabels:
+          app: nginx
+
+- name: "Pod set runAsNonRoot to false and container to true"
+  pass: true
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -60,9 +81,8 @@
         matchLabels:
           app: nginx
 
-- name: "Container explicitly set runAsNonRoot to false and Pod to true"
+- name: "container set runAsNonRoot to false and Pod to true"
   pass: false
-  message: "Container could be running as root user"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -86,7 +106,7 @@
         matchLabels:
           app: nginx
 
-- name: "Container set runAsNonRoot to true and Pod not specified"
+- name: "container set runAsNonRoot to true and Pod not specified"
   pass: true
   input: |
     apiVersion: apps/v1
@@ -109,7 +129,7 @@
         matchLabels:
           app: nginx
 
-- name: "Pod set runAsNonRoot to true and Container not specified"
+- name: "Pod set runAsNonRoot to true and container not specified"
   pass: true
   input: |
     apiVersion: apps/v1
