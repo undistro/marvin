@@ -110,6 +110,7 @@ Medium     M-108   Forbidden proc mount type                               Passe
 Medium     M-109   Forbidden seccomp profile                               Passed   0        33       0         
 Medium     M-110   Unsafe sysctls                                          Passed   0        33       0         
 Medium     M-112   Allowed privilege escalation                            Passed   0        33       0         
+Medium     M-114   Container running as root UID                           Passed   0        33       0         
 Medium     M-200   Image registry not allowed                              Passed   0        33       0         
 Medium     M-400   Image tagged latest                                     Passed   0        33       0         
 Medium     M-408   Sudo in container entrypoint                            Passed   0        33       0         
@@ -122,7 +123,6 @@ Low        M-115   Not allowed seccomp profile                             Faile
 Low        M-300   Root filesystem write allowed                           Failed   29       4        0         
 Low        M-111   Not allowed volume type                                 Failed   8        25       0         
 Low        M-203   SSH server running inside container                     Passed   0        39       0         
-Low        M-114   Container running as root UID                           Passed   0        33       0         
 Low        M-401   Unmanaged Pod                                           Passed   0        15       0         
 ```
 
