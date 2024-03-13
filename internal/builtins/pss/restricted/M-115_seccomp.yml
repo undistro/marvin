@@ -62,6 +62,13 @@ variables:
         !variables.podSeccompSet && c.?securityContext.?seccompProfile.orValue(null) == null
       )
 
+  - name: isWindows
+    expression: podSpec.?os.?name.orValue("") == "windows"
 validations:
   - expression: >
-      !variables.podSeccompUnconfined && variables.explicitlyBadContainers.size() == 0 && variables.implicitlyBadContainers.size() == 0
+      variables.isWindows || 
+      ( 
+        !variables.podSeccompUnconfined && 
+        variables.explicitlyBadContainers.size() == 0 && 
+        variables.implicitlyBadContainers.size() == 0
+      )

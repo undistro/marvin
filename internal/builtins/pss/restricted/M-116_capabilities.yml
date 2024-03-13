@@ -45,10 +45,13 @@ match:
 params:
   allowedCapabilities:
     - NET_BIND_SERVICE
+variables:
+  - name: isWindows
+    expression: podSpec.?os.?name.orValue("") == "windows"
 validations:
   - expression: >
-      allContainers.all(c, c.?securityContext.?capabilities.?drop.orValue([]).exists(ca, ca == 'ALL'))
+      variables.isWindows || allContainers.all(c, c.?securityContext.?capabilities.?drop.orValue([]).exists(ca, ca == 'ALL'))
     message: "Containers must drop ALL capabilities"
   - expression: >
-      allContainers.all(c, c.?securityContext.?capabilities.?add.orValue([]).all(ca, ca in params.allowedCapabilities))
+      variables.isWindows || allContainers.all(c, c.?securityContext.?capabilities.?add.orValue([]).all(ca, ca in params.allowedCapabilities))
     message: "Container running with not allowed capabilities"
