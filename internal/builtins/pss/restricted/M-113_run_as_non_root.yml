@@ -43,8 +43,13 @@ match:
       version: v1
       resource: jobs
 variables:
+  # pod-level runAsNonRoot is explicitly set to true
   - name: podRunAsNonRoot
     expression: podSpec.?securityContext.?runAsNonRoot.orValue(false)
+
+  # pod-level runAsUser is explicitly set to non-zero
+  - name: podRunAsNonZeroUser
+    expression: podSpec.?securityContext.?runAsUser.orValue(0) != 0
 
   # containers that explicitly set runAsNonRoot=false
   - name: explicitlyBadContainers
@@ -53,11 +58,16 @@ variables:
           has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == false
       )
 
-  # containers that didn't set runAsNonRoot and aren't caught by a pod-level runAsNonRoot=true
+  # containers that
+  # - didn't set runAsNonRoot
+  # - aren't caught by a pod-level runAsNonRoot=true
+  # - didn't set non-zero runAsUser
+  # - aren't caught by a pod-level non-zero runAsUser
   - name: implicitlyBadContainers
     expression: >
       allContainers.filter(c,
-          !variables.podRunAsNonRoot && (!has(c.securityContext) || !has(c.securityContext.runAsNonRoot)) 
+          (!variables.podRunAsNonRoot && (!has(c.securityContext) || !has(c.securityContext.runAsNonRoot))) &&
+          (!variables.podRunAsNonZeroUser && c.?securityContext.?runAsUser.orValue(0) == 0)
       )
 
 validations:

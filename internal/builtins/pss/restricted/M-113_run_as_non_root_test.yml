@@ -151,3 +151,35 @@
       selector:
         matchLabels:
           app: nginx
+
+- name: "Pod set runAsUser to non-zero"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      securityContext:
+        runAsUser: 1
+      containers:
+        - name: nginx
+          image: nginx
+
+- name: "container set runAsUser to non-zero"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          securityContext:
+            runAsUser: 1
