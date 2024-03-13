@@ -52,10 +52,12 @@ params:
     - persistentVolumeClaim
     - projected
     - secret
+variables:
+  - name: volumes
+    expression: podSpec.?volumes.orValue([])
 validations:
   - expression: >
-      !has(podSpec.volumes) ||
-      podSpec.volumes.all(volume,
-        volume.exists(key, key in params.allowedVolumeTypes)
+      variables.volumes.size() == 0 || variables.volumes.all(v,
+        v.exists(key, key in params.allowedVolumeTypes)
       )
     message: "Not allowed volume type used"

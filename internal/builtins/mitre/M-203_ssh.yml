@@ -50,7 +50,7 @@ validations:
       !has(object.spec.ports) ||
       object.spec.ports.all(p,
         !(p.port in params.sshPorts) &&
-        (!has(p.targetPort) || !(p.targetPort in params.sshPorts))
+        !(p.?targetPort.orValue(0) in params.sshPorts)
       )
     message: "Service could be routing to SSH server"
 

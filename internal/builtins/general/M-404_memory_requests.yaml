@@ -41,8 +41,4 @@ match:
       resource: jobs
 validations:
   - expression: >
-      allContainers.all(container, 
-        has(container.resources) &&
-        has(container.resources.requests) &&
-        has(container.resources.requests.memory)
-      )
+      allContainers.all(c, c.?resources.?requests.?memory.orValue("") != "")

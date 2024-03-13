@@ -59,10 +59,5 @@ params:
     - SYS_CHROOT
 validations:
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.capabilities) ||
-        !has(container.securityContext.capabilities.add) ||
-        container.securityContext.capabilities.add.all(cap, cap in params.allowedCapabilities)
-      )
+      allContainers.all(c, c.?securityContext.?capabilities.?add.orValue([]).all(cap, cap in params.allowedCapabilities))
     message: "Container running with not allowed capabilities"

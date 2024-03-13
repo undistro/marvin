@@ -29,6 +29,4 @@ match:
       resource: replicasets
 validations:
   - expression: >
-      !has(podSpec.restartPolicy) ||
-      has(podSpec.restartPolicy) &&
-      (podSpec.restartPolicy =='Always')
+      podSpec.?restartPolicy.orValue("Always") == 'Always'

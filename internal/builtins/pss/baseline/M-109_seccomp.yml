@@ -44,16 +44,8 @@ match:
       resource: jobs
 validations:
   - expression: >
-      !has(podSpec.securityContext) || 
-      !has(podSpec.securityContext.seccompProfile) || 
-      !has(podSpec.securityContext.seccompProfile.type) || 
-      podSpec.securityContext.seccompProfile.type != 'Unconfined'
+      podSpec.?securityContext.?seccompProfile.?type.orValue("") != "Unconfined"
     message: "Pod using forbidden seccomp profile"
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) || 
-        !has(container.securityContext.seccompProfile) || 
-        !has(container.securityContext.seccompProfile.type) || 
-        container.securityContext.seccompProfile.type != 'Unconfined'
-      )
+      allContainers.all(c, c.?securityContext.?seccompProfile.?type.orValue("") != "Unconfined")
     message: "Container using forbidden seccomp profile"

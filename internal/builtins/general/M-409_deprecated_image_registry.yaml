@@ -41,5 +41,4 @@ match:
       resource: jobs
 validations:
   - expression: >
-      allContainers.all(container,
-      !container.image.contains("k8s.grc.io"))
+      allContainers.all(c, !c.image.contains("k8s.grc.io"))
