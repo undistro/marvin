@@ -55,7 +55,7 @@ variables:
   - name: explicitlyBadContainers
     expression: >
       allContainers.filter(c,
-          has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == false
+          c.?securityContext.?runAsNonRoot.orValue(null) == false
       )
 
   # containers that
@@ -66,7 +66,7 @@ variables:
   - name: implicitlyBadContainers
     expression: >
       allContainers.filter(c,
-          (!variables.podRunAsNonRoot && (!has(c.securityContext) || !has(c.securityContext.runAsNonRoot))) &&
+          (!variables.podRunAsNonRoot && c.?securityContext.?runAsNonRoot.orValue(null) == null) &&
           (!variables.podRunAsNonZeroUser && c.?securityContext.?runAsUser.orValue(0) == 0)
       )
 
