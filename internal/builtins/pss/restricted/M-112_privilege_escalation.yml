@@ -47,5 +47,4 @@ variables:
     expression: podSpec.?os.?name.orValue("") == "windows"
 validations:
   - expression: >
-      variables.isWindows || allContainers.all(c, c.?securityContext.?allowPrivilegeEscalation.orValue(false) == false)
-    message: "Container with allowed privilege escalation"
+      variables.isWindows || allContainers.all(c, c.?securityContext.?allowPrivilegeEscalation.orValue(true) == false)
