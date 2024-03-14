@@ -14,7 +14,6 @@
 
 - name: "securityContext not specified"
   pass: false
-  message: "Seccomp profile not set"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -36,7 +35,6 @@
 
 - name: "securityContext.seccompProfile not specified"
   pass: false
-  message: "Seccomp profile not set"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -110,7 +108,6 @@
 
 - name: "Container securityContext.seccompProfile.type set to Unconfined"
   pass: false
-  message: "Forbidden seccomp profile"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -138,7 +135,6 @@
 
 - name: "Pod securityContext.seccompProfile.type set to Unconfined"
   pass: false
-  message: "Forbidden seccomp profile"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -163,3 +159,22 @@
       selector:
         matchLabels:
           app: nginx
+
+- name: "windows"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      os:
+        name: windows
+      containers:
+        - name: nginx
+          image: nginx
+          securityContext:
+            seccompProfile:
+              type: Unconfined

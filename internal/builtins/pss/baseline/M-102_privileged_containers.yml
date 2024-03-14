@@ -44,8 +44,5 @@ match:
       resource: jobs
 validations:
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.privileged) ||
-        container.securityContext.privileged == false)
+      allContainers.all(c, c.?securityContext.?privileged.orValue(false) == false)
     message: "Container running in privileged mode"

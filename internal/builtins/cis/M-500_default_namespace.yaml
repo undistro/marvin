@@ -40,7 +40,4 @@ match:
       version: v1
       resource: jobs
 validations:
-  - expression: >
-     has(object.metadata.namespace)
-     && (type(object.metadata.namespace) == string)
-     && !(object.metadata.namespace == 'default')
+  - expression: object.metadata.?namespace.orValue("default") != "default"

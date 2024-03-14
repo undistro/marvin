@@ -157,3 +157,20 @@
       selector:
         matchLabels:
           app: nginx
+
+- name: "windows"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      os:
+        name: windows
+      containers:
+        - name: nginx
+          image: nginx
+          securityContext: {}

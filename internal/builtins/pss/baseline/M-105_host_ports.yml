@@ -43,15 +43,8 @@ match:
       version: v1
       resource: jobs
 params:
-  allowedHostPorts: []
+  allowedHostPorts: [0]
 validations:
   - expression: >
-      allContainers.all(container,
-        !has(container.ports) ||
-        container.ports.all(port,
-          !has(port.hostPort) ||
-          port.hostPort == 0 ||
-          port.hostPort in params.allowedHostPorts
-        )
-      )
+      allContainers.all(c, c.?ports.orValue([]).all(p, p.?hostPort.orValue(0) in params.allowedHostPorts))
     message: "Container exposing not allowed port on the host"

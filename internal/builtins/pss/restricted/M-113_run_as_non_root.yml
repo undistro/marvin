@@ -47,6 +47,10 @@ variables:
   - name: podRunAsNonRoot
     expression: podSpec.?securityContext.?runAsNonRoot.orValue(false)
 
+  # pod-level runAsNonRoot is explicitly set to false
+  - name: podRunAsRoot
+    expression: podSpec.?securityContext.?runAsNonRoot.orValue(true) == false
+
   # pod-level runAsUser is explicitly set to non-zero
   - name: podRunAsNonZeroUser
     expression: podSpec.?securityContext.?runAsUser.orValue(0) != 0
@@ -71,4 +75,5 @@ variables:
       )
 
 validations:
-  - expression: variables.explicitlyBadContainers.size() == 0 && variables.implicitlyBadContainers.size() == 0
+  - expression: >
+      !variables.podRunAsRoot && variables.explicitlyBadContainers.size() == 0 && variables.implicitlyBadContainers.size() == 0

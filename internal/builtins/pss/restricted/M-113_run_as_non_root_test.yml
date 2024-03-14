@@ -57,7 +57,7 @@
           app: nginx
 
 - name: "Pod set runAsNonRoot to false and container to true"
-  pass: true
+  pass: false
   input: |
     apiVersion: apps/v1
     kind: Deployment

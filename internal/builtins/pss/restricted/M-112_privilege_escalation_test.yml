@@ -13,7 +13,7 @@
 # limitations under the License.
 
 - name: "securityContext not specified"
-  pass: true
+  pass: false
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -34,7 +34,7 @@
           app: nginx
 
 - name: "securityContext.allowPrivilegeEscalation not specified"
-  pass: true
+  pass: false
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -81,7 +81,6 @@
 
 - name: "securityContext.allowPrivilegeEscalation set to true"
   pass: false
-  message: "Container with allowed privilege escalation"
   input: |
     apiVersion: apps/v1
     kind: Deployment
@@ -102,3 +101,21 @@
       selector:
         matchLabels:
           app: nginx
+
+- name: "windows"
+  pass: true
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      os:
+        name: windows
+      containers:
+        - name: nginx
+          image: nginx
+          securityContext:
+            allowPrivilegeEscalation: true

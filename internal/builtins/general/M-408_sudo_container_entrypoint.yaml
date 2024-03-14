@@ -41,9 +41,6 @@ match:
       resource: jobs
 validations:
   - expression: >
-      allContainers.all(container, 
-      !has(container.command) ||
-      size(container.command) == 0 ||
-      container.command.all(cmd,
-      !cmd.contains("sudo"))
+      allContainers.all(c,
+        c.?command.orValue([]).all(cmd, !cmd.contains("sudo"))
       )
