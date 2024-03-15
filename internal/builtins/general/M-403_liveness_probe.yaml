@@ -33,12 +33,15 @@ match:
     - group: apps
       version: v1
       resource: replicasets
+variables:
+  - name: owners
+    expression: object.metadata.?ownerReferences.orValue([])
 validations:
   - expression: >
       (
         object.kind == "Pod" && 
-        has(object.metadata.ownerReferences) && 
-        object.metadata.ownerReferences.exists(o, has(o.kind) && has(o.apiVersion) && o.kind == "Job" && o.apiVersion == "batch/v1")
+        variables.owners != null && 
+        variables.owners.exists(o, o.?kind.orValue("") == "Job" && o.?apiVersion.orValue("") == "batch/v1")
       )
       || 
-      podSpec.containers.all(container, has(container.livenessProbe))
+      podSpec.containers.all(c, has(c.livenessProbe))

@@ -42,11 +42,9 @@ match:
     - group: batch
       version: v1
       resource: jobs
+variables:
+  - name: isWindows
+    expression: podSpec.?os.?name.orValue("") == "windows"
 validations:
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.allowPrivilegeEscalation) ||
-        container.securityContext.allowPrivilegeEscalation == false
-      )
-    message: "Container with allowed privilege escalation"
+      variables.isWindows || allContainers.all(c, c.?securityContext.?allowPrivilegeEscalation.orValue(true) == false)

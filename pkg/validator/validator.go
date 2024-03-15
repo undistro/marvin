@@ -19,20 +19,26 @@ import (
 
 	"github.com/google/cel-go/cel"
 	"github.com/google/cel-go/common/types"
+	"github.com/google/cel-go/common/types/ref"
+	marvin "github.com/undistro/marvin/pkg/types"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/version"
-
-	marvin "github.com/undistro/marvin/pkg/types"
+	"k8s.io/apiserver/pkg/cel/lazy"
 )
 
 // CELValidator is a Validator that performs CEL expressions
 type CELValidator struct {
 	check       marvin.Check
 	programs    []cel.Program
-	hasPodSpec  bool
 	apiVersions []string
 	kubeVersion *version.Info
+	variables   []compiledVariable
+}
+
+type compiledVariable struct {
+	name    string
+	program cel.Program
 }
 
 func (r *CELValidator) SetAPIVersions(apiVersions []string) {
@@ -47,10 +53,15 @@ func (r *CELValidator) Validate(obj unstructured.Unstructured, params any) (bool
 	if params == nil {
 		params = r.check.Params
 	}
-	input := &activation{object: obj.UnstructuredContent(), apiVersions: r.apiVersions, params: params}
+	input := &activation{object: obj.UnstructuredContent(), apiVersions: r.apiVersions, params: params, variables: make(map[string]any)}
 	if err := r.setPodSpecParams(obj, input); err != nil {
 		return false, "", err
 	}
+	lazyMap := lazy.NewMapValue(types.MapType)
+	for _, v := range r.variables {
+		lazyMap.Append(v.name, callback(v, input))
+	}
+	input.variables = lazyMap
 	for i, prg := range r.programs {
 		out, _, err := prg.Eval(input)
 		if err != nil {
@@ -63,8 +74,18 @@ func (r *CELValidator) Validate(obj unstructured.Unstructured, params any) (bool
 	return true, "", nil
 }
 
+func callback(v compiledVariable, activation any) lazy.GetFieldFunc {
+	return func(_ *lazy.MapValue) ref.Val {
+		val, _, err := v.program.Eval(activation)
+		if err != nil {
+			return types.NewErr("variable %q fails to evaluate: %v", v.name, err)
+		}
+		return val
+	}
+}
+
 func (r *CELValidator) setPodSpecParams(obj unstructured.Unstructured, input *activation) error {
-	if !r.hasPodSpec || !HasPodSpec(obj) {
+	if !HasPodSpec(obj) {
 		return nil
 	}
 	meta, spec, err := ExtractPodSpec(obj)

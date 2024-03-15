@@ -49,11 +49,12 @@ params:
     - net.ipv4.ip_unprivileged_port_start
     - net.ipv4.tcp_syncookies
     - net.ipv4.ping_group_range
+variables:
+  - name: sysctls
+    expression: podSpec.?securityContext.?sysctls.orValue([])
 validations:
   - expression: >
-      !has(podSpec.securityContext) ||
-      !has(podSpec.securityContext.sysctls) ||
-      podSpec.securityContext.sysctls.all(s,
+      variables.sysctls.size() == 0 || variables.sysctls.all(s,
         s.name == null ||
         s.name in params.allowedSysctls
       )

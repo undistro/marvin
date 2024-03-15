@@ -42,20 +42,38 @@ match:
     - group: batch
       version: v1
       resource: jobs
-validations:
-  # Pod or Containers must set `securityContext.runAsNonRoot`
-  - expression: >
-      (has(podSpec.securityContext) && has(podSpec.securityContext.runAsNonRoot)) ||
-      allContainers.all(container,
-        has(container.securityContext) && has(container.securityContext.runAsNonRoot)
-      )
-    message: "Container could be running as root user"
+variables:
+  # pod-level runAsNonRoot is explicitly set to true
+  - name: podRunAsNonRoot
+    expression: podSpec.?securityContext.?runAsNonRoot.orValue(false)
 
-  # Neither Pod nor Containers should set `securityContext.runAsNonRoot` to false
-  - expression: >
-      (!has(podSpec.securityContext) || !has(podSpec.securityContext.runAsNonRoot) || podSpec.securityContext.runAsNonRoot != false)
-      &&
-      allContainers.all(container,
-        !has(container.securityContext) || !has(container.securityContext.runAsNonRoot) || container.securityContext.runAsNonRoot != false
+  # pod-level runAsNonRoot is explicitly set to false
+  - name: podRunAsRoot
+    expression: podSpec.?securityContext.?runAsNonRoot.orValue(true) == false
+
+  # pod-level runAsUser is explicitly set to non-zero
+  - name: podRunAsNonZeroUser
+    expression: podSpec.?securityContext.?runAsUser.orValue(0) != 0
+
+  # containers that explicitly set runAsNonRoot=false
+  - name: explicitlyBadContainers
+    expression: >
+      allContainers.filter(c,
+          c.?securityContext.?runAsNonRoot.orValue(null) == false
       )
-    message: "Container could be running as root user"
+
+  # containers that
+  # - didn't set runAsNonRoot
+  # - aren't caught by a pod-level runAsNonRoot=true
+  # - didn't set non-zero runAsUser
+  # - aren't caught by a pod-level non-zero runAsUser
+  - name: implicitlyBadContainers
+    expression: >
+      allContainers.filter(c,
+          (!variables.podRunAsNonRoot && c.?securityContext.?runAsNonRoot.orValue(null) == null) &&
+          (!variables.podRunAsNonZeroUser && c.?securityContext.?runAsUser.orValue(0) == 0)
+      )
+
+validations:
+  - expression: >
+      !variables.podRunAsRoot && variables.explicitlyBadContainers.size() == 0 && variables.implicitlyBadContainers.size() == 0

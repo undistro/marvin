@@ -44,5 +44,5 @@ match:
       resource: jobs
 validations:
   - expression: >
-      !has(podSpec.volumes) || podSpec.volumes.all(vol, !has(vol.hostPath))
+      podSpec.?volumes.orValue([]).all(v, !has(v.hostPath))
     message: "Pod with mounted host volume"

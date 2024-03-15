@@ -42,34 +42,33 @@ match:
     - group: batch
       version: v1
       resource: jobs
-validations:
-  # Pod or Containers must set `securityContext.seccompProfile.type`
-  - expression: >
-      (
-        has(podSpec.securityContext) && 
-        has(podSpec.securityContext.seccompProfile) &&
-        has(podSpec.securityContext.seccompProfile.type)
-      ) ||
-      allContainers.all(container,
-        has(container.securityContext) && 
-        has(container.securityContext.seccompProfile) &&
-        has(container.securityContext.seccompProfile.type)
-      )
-    message: "Seccomp profile not set"
+variables:
+  # pod-level seccompProfile is explicitly different to Unconfined
+  - name: podSeccompSet
+    expression: podSpec.?securityContext.?seccompProfile.?type.orValue("Unconfined") != "Unconfined"
 
-  # Neither Pod nor Containers should set `securityContext.seccompProfile.type` to Unconfined
+  # pod-level seccompProfile is explicitly Unconfined
+  - name: podSeccompUnconfined
+    expression: podSpec.?securityContext.?seccompProfile.?type.orValue("") == "Unconfined"
+
+  # containers that explicitly set seccompProfile.type to Unconfined
+  - name: explicitlyBadContainers
+    expression: allContainers.filter(c, c.?securityContext.?seccompProfile.?type.orValue("") == "Unconfined")
+
+  # containers that didn't set seccompProfile and aren't caught by a pod-level seccompProfile
+  - name: implicitlyBadContainers
+    expression: >
+      allContainers.filter(c, 
+        !variables.podSeccompSet && c.?securityContext.?seccompProfile.orValue(null) == null
+      )
+
+  - name: isWindows
+    expression: podSpec.?os.?name.orValue("") == "windows"
+validations:
   - expression: >
-      (
-        !has(podSpec.securityContext) || 
-        !has(podSpec.securityContext.seccompProfile) || 
-        !has(podSpec.securityContext.seccompProfile.type) || 
-        podSpec.securityContext.seccompProfile.type != 'Unconfined'
+      variables.isWindows || 
+      ( 
+        !variables.podSeccompUnconfined && 
+        variables.explicitlyBadContainers.size() == 0 && 
+        variables.implicitlyBadContainers.size() == 0
       )
-      &&
-      allContainers.all(container,
-        !has(container.securityContext) || 
-        !has(container.securityContext.seccompProfile) || 
-        !has(container.securityContext.seccompProfile.type) || 
-        container.securityContext.seccompProfile.type != 'Unconfined'
-      )
-    message: "Forbidden seccomp profile"

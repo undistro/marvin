@@ -47,48 +47,23 @@ params:
     - container_t
     - container_init_t
     - container_kvm_t
+    - ""
 validations:
   - expression: >
-      !has(podSpec.securityContext) ||
-      !has(podSpec.securityContext.seLinuxOptions) ||
-      !has(podSpec.securityContext.seLinuxOptions.type) ||
-      podSpec.securityContext.seLinuxOptions.type == '' ||
-      podSpec.securityContext.seLinuxOptions.type in params.allowedSELinuxTypes
+      podSpec.?securityContext.?seLinuxOptions.?type.orValue("") in params.allowedSELinuxTypes
     message: "Pod with not allowed SELinux type"
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.seLinuxOptions) ||
-        !has(container.securityContext.seLinuxOptions.type) ||
-        container.securityContext.seLinuxOptions.type == '' ||
-        container.securityContext.seLinuxOptions.type in params.allowedSELinuxTypes
-      )
+      allContainers.all(c, c.?securityContext.?seLinuxOptions.?type.orValue("") in params.allowedSELinuxTypes)
     message: "Container with not allowed SELinux type"
   - expression: >
-      !has(podSpec.securityContext) ||
-      !has(podSpec.securityContext.seLinuxOptions) ||
-      !has(podSpec.securityContext.seLinuxOptions.user) ||
-      podSpec.securityContext.seLinuxOptions.user == ''
+      podSpec.?securityContext.?seLinuxOptions.?user.orValue("") == ""
     message: "Pod with forbidden SELinux user"
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.seLinuxOptions) ||
-        !has(container.securityContext.seLinuxOptions.user) ||
-        container.securityContext.seLinuxOptions.user == ''
-      )
+      allContainers.all(c, c.?securityContext.?seLinuxOptions.?user.orValue("") == "")
     message: "Container with forbidden SELinux user"
   - expression: >
-      !has(podSpec.securityContext) ||
-      !has(podSpec.securityContext.seLinuxOptions) ||
-      !has(podSpec.securityContext.seLinuxOptions.role) ||
-      podSpec.securityContext.seLinuxOptions.role == ''
+      podSpec.?securityContext.?seLinuxOptions.?role.orValue("") == ""
     message: "Pod with forbidden SELinux role"
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.seLinuxOptions) ||
-        !has(container.securityContext.seLinuxOptions.role) ||
-        container.securityContext.seLinuxOptions.role == ''
-      )
+      allContainers.all(c, c.?securityContext.?seLinuxOptions.?role.orValue("") == "")
     message: "Container with forbidden SELinux role"

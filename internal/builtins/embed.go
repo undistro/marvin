@@ -19,4 +19,4 @@ import (
 )
 
 //go:embed *
-var EmbbedChecksFS embed.FS
+var EmbedChecksFS embed.FS

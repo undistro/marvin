@@ -26,8 +26,8 @@ import (
 var Builtins []types.Check
 
 func init() {
-	c, _, walkFn := walkDir(builtins.EmbbedChecksFS.ReadFile, true)
-	err := fs.WalkDir(builtins.EmbbedChecksFS, ".", walkFn)
+	c, _, walkFn := walkDir(builtins.EmbedChecksFS.ReadFile, true)
+	err := fs.WalkDir(builtins.EmbedChecksFS, ".", walkFn)
 	if err != nil {
 		log.Fatal(err)
 	}

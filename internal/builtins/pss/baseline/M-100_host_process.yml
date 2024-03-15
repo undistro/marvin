@@ -44,15 +44,8 @@ match:
       resource: jobs
 validations:
   - expression: >
-      !has(podSpec.securityContext) || 
-      !has(podSpec.securityContext.windowsOptions) || 
-      !has(podSpec.securityContext.windowsOptions.hostProcess) || 
-      podSpec.securityContext.windowsOptions.hostProcess == false
+      podSpec.?securityContext.?windowsOptions.?hostProcess.orValue(false) == false
     message: "Pod with privileged access to the Windows node"
   - expression: >
-      allContainers.all(container,
-        !has(container.securityContext) ||
-        !has(container.securityContext.windowsOptions) ||
-        !has(container.securityContext.windowsOptions.hostProcess) ||
-        container.securityContext.windowsOptions.hostProcess == false)
+      allContainers.all(c, c.?securityContext.?windowsOptions.?hostProcess.orValue(false) == false)
     message: "Container with privileged access to the Windows node"

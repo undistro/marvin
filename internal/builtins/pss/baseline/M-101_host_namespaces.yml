@@ -44,7 +44,7 @@ match:
       resource: jobs
 validations:
   - expression: >
-      (!has(podSpec.hostNetwork) || podSpec.hostNetwork == false) &&
-      (!has(podSpec.hostPID) || podSpec.hostPID == false) &&
-      (!has(podSpec.hostIPC) || podSpec.hostIPC == false)
+      podSpec.?hostNetwork.orValue(false) == false &&
+      podSpec.?hostPID.orValue(false) == false &&
+      podSpec.?hostIPC.orValue(false) == false
     message: "Pod sharing host namespace"

@@ -21,9 +21,9 @@ match:
     - group: ""
       version: v1
       resource: pods
+variables:
+  - name: owners
+    expression: object.metadata.?ownerReferences.orValue([])
 validations:
   - expression: >
-      has(object.metadata.ownerReferences) && 
-      object.metadata.ownerReferences != null &&
-      object.metadata.ownerReferences.size() > 0 &&
-      object.metadata.ownerReferences.exists(o, has(o.controller) && o.controller == true)
+      variables.owners != null && variables.owners.exists(o, o.?controller.orValue(false) == true)

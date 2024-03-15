@@ -20,8 +20,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEmbbedChecks(t *testing.T) {
-	entries, err := EmbbedChecksFS.ReadDir(".")
+func TestEmbedChecks(t *testing.T) {
+	entries, err := EmbedChecksFS.ReadDir(".")
 	assert.NoError(t, err)
 	assert.Greater(t, len(entries), 0)
 }
