@@ -70,8 +70,14 @@ func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVers
 	}
 
 	variables, err := compileVariables(env, check.Variables)
+	if err != nil {
+		return nil, err
+	}
 
 	prgs, err := compileValidations(env, check.Validations)
+	if err != nil {
+		return nil, err
+	}
 
 	apiVersions := make([]string, 0, len(apiResources))
 	for _, resource := range apiResources {
