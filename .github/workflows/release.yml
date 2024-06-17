@@ -65,7 +65,7 @@ jobs:
           cat Dockerfile.cross
 
       - name: build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: |
             VERSION${{ fromJSON(steps.goreleaser.outputs.metadata).version }}
