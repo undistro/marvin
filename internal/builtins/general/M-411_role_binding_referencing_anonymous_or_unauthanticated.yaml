@@ -13,7 +13,7 @@
 # limitations under the License.
 
 id: M-411
-slug: role binding referencing anonymous or unauthenticated
+slug: role-binding-referencing-anonymous-or-unauthenticated
 severity: Medium
 message: "Role Binding referencing anonymous user or unauthenticated group"
 match:

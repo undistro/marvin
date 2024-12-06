@@ -13,7 +13,7 @@
 # limitations under the License.
 
 id: M-410
-slug: resource using invalid restartPolicy
+slug: resource-using-invalid-restartpolicy
 severity: Medium
 message: "Not allowed restartPolicy"
 match:
