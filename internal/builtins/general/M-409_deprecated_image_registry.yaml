@@ -13,7 +13,7 @@
 # limitations under the License.
 
 id: M-409
-slug: depŕecated-image-registry
+slug: deprecated-image-registry
 severity: Medium
 message: "Deprecated image registry"
 match:

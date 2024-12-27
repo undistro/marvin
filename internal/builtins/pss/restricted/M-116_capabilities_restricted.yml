@@ -16,7 +16,7 @@
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_restricted.go
 # https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_restricted_test.go
 id: M-116
-slug: capabilities
+slug: capabilities-restricted
 severity: Low
 message: "Not allowed added/dropped capabilities"
 match:
