@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-id: M-202
-slug: auto-mount-sa-token
-severity: Low
-message: "Automounted service account token"
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline.go
+# https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/pod-security-admission/policy/check_capabilities_baseline_test.go
+id: M-103
+slug: capabilities-baseline
+severity: High
+message: "Insecure capabilities"
 match:
   resources:
     - group: ""
@@ -39,7 +42,22 @@ match:
     - group: batch
       version: v1
       resource: jobs
+params:
+  allowedCapabilities:
+    - AUDIT_WRITE
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - FSETID
+    - KILL
+    - MKNOD
+    - NET_BIND_SERVICE
+    - SETFCAP
+    - SETGID
+    - SETPCAP
+    - SETUID
+    - SYS_CHROOT
 validations:
   - expression: >
-      podSpec.?automountServiceAccountToken.orValue(true) == false
-    message: "Pod with Service Account token mounted automatically"
+      allContainers.all(c, c.?securityContext.?capabilities.?add.orValue([]).all(cap, cap in params.allowedCapabilities))
+    message: "Container running with not allowed capabilities"

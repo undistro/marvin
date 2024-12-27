@@ -13,7 +13,7 @@
 # limitations under the License.
 
 id: M-200
-slug: image-registry
+slug: allowed-registries
 severity: Medium
 message: "Image registry not allowed"
 match:
