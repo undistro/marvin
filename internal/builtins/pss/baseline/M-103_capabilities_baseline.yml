@@ -24,6 +24,9 @@ match:
     - group: ""
       version: v1
       resource: pods
+    - group: ""
+      version: v1
+      resource: pods/ephemeralcontainers
     - group: apps
       version: v1
       resource: deployments
