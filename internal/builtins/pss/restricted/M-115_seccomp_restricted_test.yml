@@ -102,6 +102,7 @@
               securityContext:
                 seccompProfile:
                   type: Localhost
+                  localhostProfile: local-profile
       selector:
         matchLabels:
           app: nginx
@@ -156,6 +157,7 @@
               securityContext:
                 seccompProfile:
                   type: Localhost
+                  localhostProfile: local-profile
       selector:
         matchLabels:
           app: nginx
