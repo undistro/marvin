@@ -77,9 +77,9 @@
         app: nginx
     spec:
       containers:
-        - name: reg-fail1
-          image: not-ok-registry.com:80/nginx@sha256:asdf
-        - name:  reg-fail2
-          image: also-not-ok-registry.com:80/nginx@sha256:asdf
-        - name: reg-ok
-          image: k8s.grc.io/pause
+        - name: reg-ok1
+          image: ok-registry.com:80/nginx@sha256:asdf
+        - name:  reg-ok2
+          image: also-ok-registry.com:80/nginx@sha256:asdf
+        - name: reg-fail
+          image: not-allowed.io/pause
