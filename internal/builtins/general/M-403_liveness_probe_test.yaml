@@ -119,7 +119,7 @@
         kind: Job
         name: job-28119672
         uid: 3c506232-bf9b-475b-add5-d5e850ba6ceb      
-      spec:
+    spec:
       containers:
         - name: job
           image: job

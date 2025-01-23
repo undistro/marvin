@@ -160,10 +160,10 @@
         kind: Job
         name: job-28119672
         uid: 3c506232-bf9b-475b-add5-d5e850ba6ceb      
-      spec:
-        containers:
-          - name: job
-            image: job
+    spec:
+      containers:
+      - name: job
+        image: job
 
 - name: "ownerReferences set to null"
   pass: false
