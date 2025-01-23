@@ -44,7 +44,7 @@
 
 - name: "Service with SSH targetPort"
   pass: false
-  message: "Service could be routing to SSH server"
+  message: "Service should not be routing to SSH server"
   input: |
     apiVersion: v1
     kind: Service
@@ -54,8 +54,10 @@
       ports:
         - port: 8080
           targetPort: 8080
+          name: http
         - port: 80
           targetPort: 2222
+          name: ssh
       selector:
         app: nginx
       type: ClusterIP
