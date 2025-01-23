@@ -12,92 +12,56 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: "restartPolicy set Onfailure"
-  pass: false
+- name: "restartPolicy not defined"
+  pass: true
   input: |
-    apiVersion: apps/v1
-    kind: Deployment
+    apiVersion: v1
+    kind: Pod
     metadata:
       name: nginx
     spec:
-      template:
-        metadata:
-          name: nginx
-          labels:
-            app: nginx
-        spec:
-          containers:
-            - name: nginx
-              image: nginx
-          restartPolicy: OnFailure
-      selector:
-        matchLabels:
-          app: nginx     
+      containers:
+        - name: nginx
+          image: nginx
 
+
+- name: "restartPolicy set OnFailure"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+      restartPolicy: OnFailure
 
 
 - name: "restartPolicy set Always"
   pass: true
   input: |
-    apiVersion: apps/v1
-    kind: Deployment
+    apiVersion: v1
+    kind: Pod
     metadata:
       name: nginx
     spec:
-      template:
-        metadata:
-          name: nginx
-          labels:
-            app: nginx
-        spec:
-          containers:
-            - name: nginx
-              image: nginx
-          restartPolicy: Always
-      selector:
-        matchLabels:
-          app: nginx   
+      containers:
+        - name: nginx
+          image: nginx
+      restartPolicy: Always
 
-
-- name: "restartPolicy not defined"
-  pass: true
-  input: |
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: nginx
-    spec:
-      template:
-        metadata:
-          name: nginx
-          labels:
-            app: nginx
-        spec:
-          containers:
-            - name: nginx
-              image: nginx
-      selector:
-        matchLabels:
-          app: nginx
 
 - name: "restartPolicy set Never"
   pass: false
   input: |
-    apiVersion: apps/v1
-    kind: Deployment
+    apiVersion: v1
+    kind: Pod
     metadata:
       name: nginx
     spec:
-      template:
-        metadata:
-          name: nginx
-          labels:
-            app: nginx
-        spec:
-          containers:
-            - name: nginx
-              image: nginx
-          restartPolicy: Never
-      selector:
-        matchLabels:
-          app: nginx
+      containers:
+        - name: nginx
+          image: nginx
+      restartPolicy: Never
