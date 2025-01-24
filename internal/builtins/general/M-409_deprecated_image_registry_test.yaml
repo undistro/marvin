@@ -26,8 +26,6 @@
         - name: nginx
           image: nginx
 
-
-
 - name: "registry deprecated"
   pass: false
   input: |
@@ -39,12 +37,26 @@
         app: nginx
     spec:
       containers:
-        - name: registry
-          image: registry.com:80/nginx@sha256:asdf
-        - name: ok2
-          image: registry.com:80/nginx@sha256:asdf
-        - name: wrong
+        - name: reg-fail
           image: k8s.grc.io/pause
+
+- name: "registry deprecated top"
+  pass: false
+  input: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: reg-fail
+          image: k8s.grc.io/pause
+        - name: reg-ok1
+          image: ok-registry.com:80/nginx@sha256:asdf
+        - name:  reg-ok2
+          image: also-ok-registry.com:80/nginx@sha256:asdf
 
 - name: "registry deprecated middle"
   pass: false
@@ -57,16 +69,14 @@
         app: nginx
     spec:
       containers:
-        - name: registry
-          image: registry.com:80/nginx@sha256:asdf
-        - name: wrong
+        - name: reg-ok1
+          image: ok-registry.com:80/nginx@sha256:asdf
+        - name: reg-fail
           image: k8s.grc.io/pause
-        - name: ok2
-          image: registry.com:80/nginx@sha256:asdf
+        - name:  reg-ok2
+          image: also-ok-registry.com:80/nginx@sha256:asdf
 
-
-
-- name: "registry deprecated"
+- name: "registry deprecated bottom"
   pass: false
   input: |
     apiVersion: v1
@@ -77,9 +87,11 @@
         app: nginx
     spec:
       containers:
-        - name: registry
-          image: registry.com:80/nginx@sha256:asdf
-        - name:  registryOK
-          image: registry.com:80/nginx@sha256:asdf
-        - name: wrong
+        - name: reg-ok1
+          image: ok-registry.com:80/nginx@sha256:asdf
+        - name:  reg-ok2
+          image: also-ok-registry.com:80/nginx@sha256:asdf
+        - name: reg-fail
           image: k8s.grc.io/pause
+
+

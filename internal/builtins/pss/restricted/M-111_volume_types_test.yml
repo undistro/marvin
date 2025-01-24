@@ -98,7 +98,7 @@
           volumes:
             - name: vol
               nfs:
-                path: path
+                path: /path
                 server: server
           containers:
             - name: nginx

@@ -41,7 +41,7 @@
       name: binding-name
     roleRef:
       apiGroup: rbac.authorization.k8s.io
-      kind: Role
+      kind: ClusterRole
       name: role-name
     subjects:
     - apiGroup: rbac.authorization.k8s.io
@@ -80,7 +80,7 @@
       name: binding-name
     roleRef:
       apiGroup: rbac.authorization.k8s.io
-      kind: Role
+      kind: ClusterRole
       name: role-name
     subjects:
     - apiGroup: rbac.authorization.k8s.io
@@ -115,7 +115,7 @@
       name: binding-name
     roleRef:
       apiGroup: rbac.authorization.k8s.io
-      kind: Role
+      kind: ClusterRole
       name: role-name
     subjects:
     - kind: ServiceAccount

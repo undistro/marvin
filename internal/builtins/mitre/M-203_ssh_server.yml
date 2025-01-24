@@ -52,7 +52,7 @@ validations:
         !(p.port in params.sshPorts) &&
         !(p.?targetPort.orValue(0) in params.sshPorts)
       )
-    message: "Service could be routing to SSH server"
+    message: "Service should not be routing to SSH server"
 
   - expression: >
       allContainers.all(container,

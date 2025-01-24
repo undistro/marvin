@@ -119,6 +119,9 @@
           labels:
             app: nginx
         spec:
+          os:
+            name: windows
+          hostNetwork: true
           securityContext:
             windowsOptions:
               hostProcess: true
@@ -144,9 +147,15 @@
           labels:
             app: nginx
         spec:
+          os:
+            name: windows
+          hostNetwork: true
           containers:
             - name: proxy
               image: proxy
+              securityContext:
+                windowsOptions:
+                  hostProcess: true
             - name: nginx
               image: nginx
               securityContext:

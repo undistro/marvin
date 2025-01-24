@@ -100,11 +100,7 @@
             app: nginx
         spec:
           volumes:
-            - name: config
-              hostPath: null
-              configMap:
-                name: nginx-config
-            - name: config
+            - name: cont1
               hostPath:
                 path: path
           containers:

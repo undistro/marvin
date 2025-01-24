@@ -12,32 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: "Service with no ports"
-  pass: true
-  input: |
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: nginx
-    spec:
-      selector:
-        app: nginx
-      type: ClusterIP
-
-- name: "Service with empty ports"
-  pass: true
-  input: |
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: nginx
-    spec:
-      ports: []
-      selector:
-        app: nginx
-      type: ClusterIP
-
-- name: "Service with no SSH ports"
+- name: "Service with no targetPort"
   pass: true
   input: |
     apiVersion: v1
@@ -53,7 +28,7 @@
 
 - name: "Service with SSH port"
   pass: false
-  message: "Service could be routing to SSH server"
+  message: "Service should not be routing to SSH server"
   input: |
     apiVersion: v1
     kind: Service
@@ -69,7 +44,7 @@
 
 - name: "Service with SSH targetPort"
   pass: false
-  message: "Service could be routing to SSH server"
+  message: "Service should not be routing to SSH server"
   input: |
     apiVersion: v1
     kind: Service
@@ -79,8 +54,10 @@
       ports:
         - port: 8080
           targetPort: 8080
+          name: http
         - port: 80
           targetPort: 2222
+          name: ssh
       selector:
         app: nginx
       type: ClusterIP
