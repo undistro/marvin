@@ -38,7 +38,7 @@
     spec:
       containers:
         - name: reg-fail
-          image: not-allowed.io/pause
+          image: k8s.grc.io/pause
 
 - name: "registry deprecated top"
   pass: false
@@ -52,7 +52,7 @@
     spec:
       containers:
         - name: reg-fail
-          image: not-allowed.io/pause
+          image: k8s.grc.io/pause
         - name: reg-ok1
           image: ok-registry.com:80/nginx@sha256:asdf
         - name:  reg-ok2
@@ -72,7 +72,7 @@
         - name: reg-ok1
           image: ok-registry.com:80/nginx@sha256:asdf
         - name: reg-fail
-          image: not-allowed.io/pause
+          image: k8s.grc.io/pause
         - name:  reg-ok2
           image: also-ok-registry.com:80/nginx@sha256:asdf
 
@@ -92,6 +92,6 @@
         - name:  reg-ok2
           image: also-ok-registry.com:80/nginx@sha256:asdf
         - name: reg-fail
-          image: not-allowed.io/pause
+          image: k8s.grc.io/pause
 
 

@@ -41,4 +41,4 @@ match:
       resource: jobs
 validations:
   - expression: >
-      allContainers.all(c, !c.image.contains("not-allowed.io"))
+      allContainers.all(c, !c.image.contains("k8s.grc.io"))
