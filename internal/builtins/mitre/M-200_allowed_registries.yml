@@ -47,6 +47,6 @@ validations:
       size(params.allowedRegistries) == 0 ||
       allContainers.all(container,
         !container.image.contains('/') ||
-        container.image.split('/')[0].orValue(container.image) in params.allowedRegistries
+        container.image.?split('/')[0].orValue(container.image) in params.allowedRegistries
       )
     message: "Container image registry not allowed"
