@@ -45,7 +45,7 @@ params:
 validations:
   - expression: >
       size(params.allowedRegistries) == 0 ||
-      variables.allContainers.all(container,
+      allContainers.all(container,
         !container.image.contains('/') ||
         container.image.split('/')[0].orValue(container.image) in params.allowedRegistries
       )
