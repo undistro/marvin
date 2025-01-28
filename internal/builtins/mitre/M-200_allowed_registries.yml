@@ -42,13 +42,12 @@ match:
 params:
   # use 'docker.io' for Docker Hub
   allowedRegistries: []
+  defaultRegistries: ['docker.io']
 validations:
   - expression: >
       size(params.allowedRegistries) == 0 ||
-      allContainers.all(container,
-        params.allowedRegistries.exists(registry,
-          ((registry in ['docker.io', 'docker.io/library']) && !container.image.contains('/')) ||
-          container.image.startsWith(registry)
-        )
+      variables.allContainers.all(container,
+        !container.image.contains('/') ||
+        container.image.split('/')[0].orValue(container.image) in params.allowedRegistries
       )
     message: "Container image registry not allowed"
