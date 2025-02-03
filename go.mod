@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/fatih/color v1.16.0
+	github.com/fatih/color v1.18.0
 	github.com/go-logr/logr v1.4.1
 	github.com/google/cel-go v0.17.8
 	github.com/olekukonko/tablewriter v0.0.5
@@ -63,7 +63,7 @@ require (
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/oauth2 v0.10.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
