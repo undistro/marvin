@@ -1,16 +1,16 @@
 module github.com/undistro/marvin
 
-go 1.22.0
+go 1.22.12
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/fatih/color v1.16.0
-	github.com/go-logr/logr v1.4.1
+	github.com/Masterminds/semver/v3 v3.3.1
+	github.com/fatih/color v1.18.0
+	github.com/go-logr/logr v1.4.2
 	github.com/google/cel-go v0.17.8
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/spf13/cobra v1.8.0
-	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.9.0
+	github.com/spf13/cobra v1.9.1
+	github.com/spf13/pflag v1.0.6
+	github.com/stretchr/testify v1.10.0
 	k8s.io/api v0.30.0
 	k8s.io/apimachinery v0.30.0
 	k8s.io/apiserver v0.30.0
@@ -60,12 +60,12 @@ require (
 	github.com/xlab/treeprint v1.2.0 // indirect
 	go.starlark.net v0.0.0-20230525235612-a134d8f9ddca // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
-	golang.org/x/net v0.23.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.10.0 // indirect
-	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
-	golang.org/x/term v0.18.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230726155614-23370e0ffb3e // indirect
