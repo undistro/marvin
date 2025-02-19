@@ -3,7 +3,7 @@ module github.com/undistro/marvin
 go 1.22.12
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/fatih/color v1.16.0
 	github.com/go-logr/logr v1.4.1
 	github.com/google/cel-go v0.17.8
