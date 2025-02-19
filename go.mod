@@ -5,7 +5,7 @@ go 1.22.12
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/fatih/color v1.18.0
-	github.com/go-logr/logr v1.4.1
+	github.com/go-logr/logr v1.4.2
 	github.com/google/cel-go v0.17.8
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/spf13/cobra v1.9.1
