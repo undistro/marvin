@@ -142,7 +142,7 @@ func compileExpression(env *cel.Env, exp string, costLimit uint64, allowedTypes 
 		return nil, fmt.Errorf("must evaluate to one of %v", allowedTypes)
 	}
 	opts := programOptions
-	if costLimit <= 0 {
+	if costLimit > 0 {
 		opts = append(opts, cel.CostLimit(costLimit))
 	}
 	prg, err := env.Program(ast, opts...)
