@@ -104,7 +104,7 @@ func TestCompile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.check.ID, func(t *testing.T) {
-			_, err := Compile(tt.check, apiResources, kubeVersion)
+			_, err := Compile(tt.check, apiResources, kubeVersion, 1000000)
 			if !tt.wantErr(t, err, fmt.Sprintf("Compile(%v, %v, %v)", tt.check, apiResources, kubeVersion)) {
 				return
 			}

@@ -50,6 +50,7 @@ type ScanOptions struct {
 	SkipAnnotation        *string
 	DisableAnnotationSkip *bool
 	DisableZoraBanner     *bool
+	CostLimit             *uint64
 
 	ctx          context.Context
 	log          logr.Logger
@@ -73,6 +74,7 @@ func NewScanOptions() *ScanOptions {
 		DisableAnnotationSkip: pointer.Bool(false),
 		DisableZoraBanner:     pointer.Bool(false),
 		SkipAnnotation:        pointer.String("marvin.undistro.io/skip"),
+		CostLimit:             pointer.Uint64(1000000),
 	}
 }
 
@@ -99,6 +101,9 @@ func (o *ScanOptions) AddFlags(flags *pflag.FlagSet) {
 	}
 	if o.DisableZoraBanner != nil {
 		flags.BoolVar(o.DisableZoraBanner, "disable-zora-banner", *o.DisableZoraBanner, "Disable Zora banner on output")
+	}
+	if o.CostLimit != nil {
+		flags.Uint64Var(o.CostLimit, "cost-limit", *o.CostLimit, "CEL cost limit. Set 0 to disable it.")
 	}
 }
 
@@ -213,7 +218,7 @@ func (o *ScanOptions) runCheck(check types.Check) *types.CheckResult {
 	log := o.log.WithValues("check", check.ID)
 	cr := types.NewCheckResult(check)
 	defer cr.UpdateStatus()
-	v, err := validator.Compile(check, o.apiResources, o.kubeVersion)
+	v, err := validator.Compile(check, o.apiResources, o.kubeVersion, *o.CostLimit)
 	if err != nil {
 		log.Error(err, "failed to compile check "+check.ID)
 		cr.AddError(fmt.Errorf("%s compile error: %s", check.Path, err.Error()))

@@ -36,7 +36,7 @@ func TestBuiltinChecks(t *testing.T) {
 			assert.True(t, ok)
 			assert.NotNil(t, check)
 			assert.NotEmpty(t, check.ID)
-			v, err := validator.Compile(check, nil, nil)
+			v, err := validator.Compile(check, nil, nil, 1000000)
 			assert.NoError(t, err)
 			assert.NotNil(t, v)
 			for _, tt := range checkTests {
