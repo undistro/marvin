@@ -49,7 +49,6 @@ var baseEnvOptions = []cel.EnvOption{
 
 var programOptions = []cel.ProgramOption{
 	cel.EvalOptions(cel.OptOptimize),
-	cel.CostLimit(1000000),
 	cel.InterruptCheckFrequency(100),
 }
 
@@ -60,7 +59,7 @@ var podSpecEnvOptions = []cel.EnvOption{
 }
 
 // Compile compiles variables and expressions of the given check and returns a Validator
-func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVersion *version.Info) (Validator, error) {
+func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVersion *version.Info, costLimit uint64) (Validator, error) {
 	if len(check.Validations) == 0 {
 		return nil, errors.New("invalid check: a check must have at least 1 validation")
 	}
@@ -69,12 +68,12 @@ func Compile(check types.Check, apiResources []*metav1.APIResourceList, kubeVers
 		return nil, fmt.Errorf("environment construction error %s", err.Error())
 	}
 
-	variables, err := compileVariables(env, check.Variables)
+	variables, err := compileVariables(env, check.Variables, costLimit)
 	if err != nil {
 		return nil, err
 	}
 
-	prgs, err := compileValidations(env, check.Validations)
+	prgs, err := compileValidations(env, check.Validations, costLimit)
 	if err != nil {
 		return nil, err
 	}
@@ -100,10 +99,10 @@ func newEnv(check types.Check) (*cel.Env, error) {
 	return cel.NewEnv(opts...)
 }
 
-func compileVariables(env *cel.Env, vars []types.Variable) ([]compiledVariable, error) {
+func compileVariables(env *cel.Env, vars []types.Variable, costLimit uint64) ([]compiledVariable, error) {
 	variables := make([]compiledVariable, 0, len(vars))
 	for _, v := range vars {
-		prg, err := compileExpression(env, v.Expression, cel.AnyType)
+		prg, err := compileExpression(env, v.Expression, costLimit, cel.AnyType)
 		if err != nil {
 			return nil, fmt.Errorf("variables[%q].expression: %s", v.Name, err)
 		}
@@ -112,10 +111,10 @@ func compileVariables(env *cel.Env, vars []types.Variable) ([]compiledVariable, 
 	return variables, nil
 }
 
-func compileValidations(env *cel.Env, vals []types.Validation) ([]cel.Program, error) {
+func compileValidations(env *cel.Env, vals []types.Validation, costLimit uint64) ([]cel.Program, error) {
 	prgs := make([]cel.Program, 0, len(vals))
 	for i, v := range vals {
-		prg, err := compileExpression(env, v.Expression, cel.BoolType)
+		prg, err := compileExpression(env, v.Expression, costLimit, cel.BoolType)
 		if err != nil {
 			return nil, fmt.Errorf("validations[%d].expression: %s", i, err)
 		}
@@ -124,7 +123,7 @@ func compileValidations(env *cel.Env, vals []types.Validation) ([]cel.Program, e
 	return prgs, nil
 }
 
-func compileExpression(env *cel.Env, exp string, allowedTypes ...*cel.Type) (cel.Program, error) {
+func compileExpression(env *cel.Env, exp string, costLimit uint64, allowedTypes ...*cel.Type) (cel.Program, error) {
 	ast, issues := env.Compile(exp)
 	if issues != nil && issues.Err() != nil {
 		return nil, fmt.Errorf("type-check error: %s", issues.Err())
@@ -142,7 +141,11 @@ func compileExpression(env *cel.Env, exp string, allowedTypes ...*cel.Type) (cel
 		}
 		return nil, fmt.Errorf("must evaluate to one of %v", allowedTypes)
 	}
-	prg, err := env.Program(ast, programOptions...)
+	opts := programOptions
+	if costLimit <= 0 {
+		opts = append(opts, cel.CostLimit(costLimit))
+	}
+	prg, err := env.Program(ast, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("program construction error: %s", err)
 	}
