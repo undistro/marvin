@@ -33,14 +33,26 @@ var baseEnvOptions = []cel.EnvOption{
 	cel.DefaultUTCTimeZone(true),
 	cel.CrossTypeNumericComparisons(true),
 	cel.OptionalTypes(),
+	cel.ASTValidators(
+		cel.ValidateDurationLiterals(),
+		cel.ValidateTimestampLiterals(),
+		cel.ValidateRegexLiterals(),
+		cel.ValidateHomogeneousAggregateLiterals(),
+	),
 
 	ext.Strings(ext.StringsVersion(2)),
 	ext.Sets(),
+	ext.TwoVarComprehensions(),
+	ext.Lists(ext.ListsVersion(3)),
 
 	k8scellib.URLs(),
 	k8scellib.Regex(),
 	k8scellib.Lists(),
 	k8scellib.Quantity(),
+	k8scellib.IP(),
+	k8scellib.CIDR(),
+	k8scellib.Format(),
+	k8scellib.SemverLib(k8scellib.SemverVersion(1)),
 
 	cel.Variable(ObjectVarName, cel.DynType),
 	cel.Variable(APIVersionsVarName, cel.ListType(cel.StringType)),
@@ -49,7 +61,6 @@ var baseEnvOptions = []cel.EnvOption{
 
 var programOptions = []cel.ProgramOption{
 	cel.EvalOptions(cel.OptOptimize),
-	cel.InterruptCheckFrequency(100),
 }
 
 var podSpecEnvOptions = []cel.EnvOption{
