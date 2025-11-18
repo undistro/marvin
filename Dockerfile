@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.24 AS builder
+FROM golang:1.25.4-alpine AS builder
 ARG TARGETOS
 ARG TARGETARCH
 ARG VERSION
@@ -35,7 +35,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build \
     -X github.com/undistro/marvin/pkg/version.date=${DATE}" -a -o marvin main.go
 
 FROM alpine:3.22
-RUN apk upgrade && rm /var/cache/apk/*
+RUN apk update && apk upgrade && rm -rf /var/cache/apk
 RUN addgroup -g 8494 -S nonroot && adduser -u 8494 -D -S nonroot -G nonroot
 USER 8494:8494
 
