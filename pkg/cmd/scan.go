@@ -49,7 +49,6 @@ type ScanOptions struct {
 	NoFail                *bool
 	SkipAnnotation        *string
 	DisableAnnotationSkip *bool
-	DisableZoraBanner     *bool
 	CostLimit             *uint64
 
 	ctx          context.Context
@@ -72,7 +71,6 @@ func NewScanOptions() *ScanOptions {
 		OutputFormat:          pointer.String("table"),
 		NoFail:                pointer.Bool(false),
 		DisableAnnotationSkip: pointer.Bool(false),
-		DisableZoraBanner:     pointer.Bool(false),
 		SkipAnnotation:        pointer.String("marvin.undistro.io/skip"),
 		CostLimit:             pointer.Uint64(1000000),
 	}
@@ -99,9 +97,6 @@ func (o *ScanOptions) AddFlags(flags *pflag.FlagSet) {
 	if o.DisableAnnotationSkip != nil {
 		flags.BoolVar(o.DisableAnnotationSkip, "disable-annotation-skip", *o.DisableAnnotationSkip, "Disable resource skipping by annotation")
 	}
-	if o.DisableZoraBanner != nil {
-		flags.BoolVar(o.DisableZoraBanner, "disable-zora-banner", *o.DisableZoraBanner, "Disable Zora banner on output")
-	}
 	if o.CostLimit != nil {
 		flags.Uint64Var(o.CostLimit, "cost-limit", *o.CostLimit, "CEL cost limit. Set 0 to disable it.")
 	}
@@ -122,7 +117,7 @@ func (o *ScanOptions) Init(ctx context.Context) error {
 	case "yaml":
 		printer = &printers.YAMLPrinter{}
 	case "table":
-		printer = &printers.TablePrinter{DisableZoraBanner: *o.DisableZoraBanner}
+		printer = &printers.TablePrinter{}
 	case "markdown":
 		color.NoColor = true
 		printer = &printers.MarkdownPrinter{}
