@@ -65,6 +65,11 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&noColor, "no-color", false, "Disable color output")
 	var allFlags flag.FlagSet
 	klog.InitFlags(&allFlags)
+	// Opt into the new klog behavior so that -stderrthreshold is honored even
+	// when -logtostderr=true (the default).
+	// Ref: kubernetes/klog#212, kubernetes/klog#432
+	_ = allFlags.Set("legacy_stderr_threshold_behavior", "false")
+	_ = allFlags.Set("stderrthreshold", "INFO")
 	allFlags.VisitAll(func(f *flag.Flag) {
 		if f.Name == "v" {
 			rootCmd.PersistentFlags().AddGoFlag(f)
