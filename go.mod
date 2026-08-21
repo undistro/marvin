@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/fatih/color v1.19.0
 	github.com/go-logr/logr v1.4.4
-	github.com/google/cel-go v0.29.0
+	github.com/google/cel-go v0.31.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
