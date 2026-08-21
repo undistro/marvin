@@ -22,6 +22,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/tw"
 
 	"github.com/undistro/marvin/pkg/types"
 )
@@ -39,25 +40,33 @@ type TablePrinter struct {
 }
 
 func (r *TablePrinter) PrintObj(report types.Report, w io.Writer) error {
-	t := tablewriter.NewWriter(w)
-	t.SetAutoWrapText(false)
-	t.SetAutoFormatHeaders(true)
-	t.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	t.SetAlignment(tablewriter.ALIGN_LEFT)
-	t.SetCenterSeparator("")
-	t.SetColumnSeparator("")
-	t.SetRowSeparator("")
-	t.SetHeaderLine(false)
-	t.SetBorder(false)
-	t.SetTablePadding("   ")
-	t.SetNoWhiteSpace(true)
+	t := tablewriter.NewTable(w,
+		tablewriter.WithRowAutoWrap(tw.WrapNone),
+		tablewriter.WithHeaderAutoFormat(tw.On),
+		tablewriter.WithHeaderAlignment(tw.AlignLeft),
+		tablewriter.WithRowAlignment(tw.AlignLeft),
+		tablewriter.WithPadding(tw.PaddingNone),
+		tablewriter.WithRendition(tw.Rendition{
+			Borders: tw.BorderNone,
+			Symbols: tw.NewSymbolCustom("marvin").WithCenter("").WithRow("").WithColumn("   "),
+			Settings: tw.Settings{
+				Lines: tw.LinesNone,
+				Separators: tw.Separators{
+					ShowHeader:     tw.Off,
+					ShowFooter:     tw.Off,
+					BetweenRows:    tw.Off,
+					BetweenColumns: tw.On,
+				},
+			},
+		}),
+	)
 
 	renderTable(report, t)
 	return nil
 }
 
 func renderTable(report types.Report, t *tablewriter.Table) {
-	t.SetHeader([]string{"SEVERITY", "ID", "CHECK", "STATUS", "FAILED", "PASSED", "SKIPPED"})
+	t.Header("SEVERITY", "ID", "CHECK", "STATUS", "FAILED", "PASSED", "SKIPPED")
 	sort.Slice(report.Checks, func(i, j int) bool {
 		if report.Checks[i].Severity != report.Checks[j].Severity {
 			return report.Checks[i].Severity > report.Checks[j].Severity
@@ -98,6 +107,7 @@ func colorSeverity(s types.Severity) string {
 		return s.String()
 	}
 }
+
 func colorStatus(s types.CheckStatus) string {
 	switch s {
 	case types.StatusPassed:
