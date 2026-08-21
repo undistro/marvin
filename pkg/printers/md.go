@@ -36,6 +36,7 @@ func (*MarkdownPrinter) PrintObj(report types.Report, w io.Writer) error {
 			Symbols: tw.NewSymbols(tw.StyleMarkdown),
 		}),
 	)
+	defer func() { _ = t.Close() }()
 
 	renderTable(report, t)
 	return nil

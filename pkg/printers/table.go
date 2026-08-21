@@ -60,6 +60,7 @@ func (r *TablePrinter) PrintObj(report types.Report, w io.Writer) error {
 			},
 		}),
 	)
+	defer func() { _ = t.Close() }()
 
 	renderTable(report, t)
 	return nil
