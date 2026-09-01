@@ -18,6 +18,7 @@ import (
 	"io"
 
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/tw"
 
 	"github.com/undistro/marvin/pkg/types"
 )
@@ -26,12 +27,16 @@ import (
 type MarkdownPrinter struct{}
 
 func (*MarkdownPrinter) PrintObj(report types.Report, w io.Writer) error {
-	t := tablewriter.NewWriter(w)
-	t.SetAutoWrapText(false)
-	t.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	t.SetAlignment(tablewriter.ALIGN_LEFT)
-	t.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-	t.SetCenterSeparator("|")
+	t := tablewriter.NewTable(w,
+		tablewriter.WithRowAutoWrap(tw.WrapNone),
+		tablewriter.WithHeaderAlignment(tw.AlignLeft),
+		tablewriter.WithRowAlignment(tw.AlignLeft),
+		tablewriter.WithRendition(tw.Rendition{
+			Borders: tw.Border{Left: tw.On, Right: tw.On, Top: tw.Off, Bottom: tw.Off},
+			Symbols: tw.NewSymbols(tw.StyleMarkdown),
+		}),
+	)
+	defer func() { _ = t.Close() }()
 
 	renderTable(report, t)
 	return nil
